@@ -43,7 +43,7 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Hello />} />
+        <Route path="/" element={<div />} />
       </Routes>
     </Router>
   );
