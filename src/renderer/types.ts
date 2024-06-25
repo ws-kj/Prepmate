@@ -1,6 +1,7 @@
 export type QuestionType = "reading" | "math";
 
 export interface Question {
+  id: number;
   type: QuestionType;
   passage: string | null;
   question: string;
@@ -8,7 +9,7 @@ export interface Question {
 }
 
 export interface Answer {
-  question: number;
+  id: number;
   choice: number | null;
   freeResponseRaw: string | null;
 }

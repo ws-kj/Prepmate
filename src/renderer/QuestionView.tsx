@@ -1,11 +1,13 @@
 import React, { useState, ChangeEvent } from 'react';
-import { Latex } from 'react-latex';
 import { Question } from './types';
 import './App.css';
 
+
+var Latex = require('react-latex');
+
 interface QuestionViewProps {
   question: Question;
-  handleAnswerEntry: (index: number | null, freeResponse: string | null) => void;
+  handleAnswerEntry: (choiceIndex: number | null, freeResponse: string | null) => void;
 }
 
 const QuestionView: React.FC<QuestionViewProps> = ({question, handleAnswerEntry}) => {
@@ -22,7 +24,7 @@ const QuestionView: React.FC<QuestionViewProps> = ({question, handleAnswerEntry}
     }
   }
 
-  const handleFrqChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFrqChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setFreeResponseValue(event.target.value);
     handleAnswerEntry(null, event.target.value);
   }
