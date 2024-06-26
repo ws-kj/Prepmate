@@ -7,7 +7,7 @@ interface TestViewProps {
 }
 
 const TestView: React.FC<TestViewProps> = ({questions}) => {
-  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(questions[0]);
   const [answers, setAnswers] = useState<(Answer | null)[]>(Array(questions.length).fill(null));
 
   const handleAnswerEntry = (choiceIndex: number | null, freeResponse: string | null): void => {
@@ -38,6 +38,22 @@ const TestView: React.FC<TestViewProps> = ({questions}) => {
     setCurrentQuestion(questions[currentQuestion.id+1]);
   }
 
+  const getPrevChoice = (): number | null => {
+    if(currentQuestion != null) {
+      var answer: Answer | null = answers[currentQuestion.id];
+      if(answer != null) return answer.choice;
+    }
+    return null;
+  }
+
+  const getPrevFreeResponse = (): string => {
+    if(currentQuestion != null) {
+      var answer: Answer | null = answers[currentQuestion.id];
+      if(answer != null && answer.freeResponseRaw != null) return answer.freeResponseRaw;
+    }
+    return '';
+  }
+
   return (
     <div className="test-view">
       <div className="header">
@@ -48,6 +64,8 @@ const TestView: React.FC<TestViewProps> = ({questions}) => {
           <QuestionView
             question={currentQuestion}
             handleAnswerEntry={handleAnswerEntry}
+            getPrevChoice={getPrevChoice}
+            getPrevFreeResponse={getPrevFreeResponse}
           />
         }
       </div>

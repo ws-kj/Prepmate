@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
 import { Question } from './types';
 import './App.css';
 
@@ -8,10 +8,13 @@ var Latex = require('react-latex');
 interface QuestionViewProps {
   question: Question;
   handleAnswerEntry: (choiceIndex: number | null, freeResponse: string | null) => void;
+  getPrevChoice: () => number | null;
+  getPrevFreeResponse: () => string;
 }
 
-const QuestionView: React.FC<QuestionViewProps> = ({question, handleAnswerEntry}) => {
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+const QuestionView: React.FC<QuestionViewProps> =
+    ({question, handleAnswerEntry, getPrevChoice, getPrevFreeResponse}) => {
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(getPrevChoice());
   const [freeResponseValue, setFreeResponseValue] = useState<string>('');
 
   const handleAnswerClick = (index: number): void => {
@@ -28,6 +31,11 @@ const QuestionView: React.FC<QuestionViewProps> = ({question, handleAnswerEntry}
     setFreeResponseValue(event.target.value);
     handleAnswerEntry(null, event.target.value);
   }
+
+  useEffect(() => {
+    setSelectedAnswer(getPrevChoice());
+    setFreeResponseValue(getPrevFreeResponse());
+  }, [question]);
 
   return (
     <div className="question-view">
