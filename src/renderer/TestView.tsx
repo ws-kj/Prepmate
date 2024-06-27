@@ -59,7 +59,6 @@ const TestView: React.FC<TestViewProps> = ({questions}) => {
       <div className="header">
 
       </div>
-      <div className="question-container">
         { currentQuestion != null &&
           <QuestionView
             question={currentQuestion}
@@ -68,7 +67,6 @@ const TestView: React.FC<TestViewProps> = ({questions}) => {
             getPrevFreeResponse={getPrevFreeResponse}
           />
         }
-      </div>
       <div className="footer">
         <div className="nav-button-container">
           <button className="nav-button" onClick={handleBack}>Back</button>

@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import { Question } from './types';
+import ChoiceLetter from './ChoiceLetter';
 import './App.css';
 
 
@@ -48,6 +49,11 @@ const QuestionView: React.FC<QuestionViewProps> =
       }
       <div className="panel question-panel">
         <div className="question-container">
+          <div className="question-number-container">
+            <div className="question-number">
+              {question.id + 1}
+            </div>
+          </div>
           <p className="question">
             {question.type == "reading" ?
               question.question
@@ -64,7 +70,8 @@ const QuestionView: React.FC<QuestionViewProps> =
                 onClick={() => handleAnswerClick(index)}
                 className={selectedAnswer === index ? "choice-button selected" : "choice-button"}
               >
-                {choice}
+                <ChoiceLetter index={index} />
+                <Latex>{choice}</Latex>
               </button>
             ))}
           </div>
