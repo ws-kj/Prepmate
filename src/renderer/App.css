@@ -100,6 +100,14 @@ button:hover {
   margin-right: 20px;
 }
 
+.frq-input {
+  border: 2px solid grey;
+  border-radius: 10px;
+  font-size: 24px;
+  padding: 10px;
+  width: 100px;
+}
+
 .selected {
   border: 2px solid blue;
   color: blue !important;
