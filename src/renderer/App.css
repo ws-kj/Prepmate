@@ -2,9 +2,21 @@ body {
   height: 100%;
   width: 100%;
   margin: 0;
-  font-family: sans-serif;
+  font-family: 'Roboto', sans-serif !important;
   font-size: 24px;
   overflow: hidden;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  flex-grow: space-between;
+}
+
+.section-title {
+  font-weight: 600;
+  font-size: 20px;
+  margin-left: 20px;
 }
 
 button {
@@ -110,8 +122,7 @@ button:hover {
 
 .selected {
   border: 2px solid blue;
-  color: blue !important;
-  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 255, 0.2);
 }
 
 .header {
