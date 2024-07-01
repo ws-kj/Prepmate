@@ -25,6 +25,35 @@ interface TestCsvRow {
 
 const choiceLetters: string[] = ["A", "B", "C", "D"];
 
+const shuffleChoices = (choices: string[]) => {
+  var currentIdx = choices.length;
+
+  while(currentIdx != 0) {
+    var randomIdx = Math.floor(Math.random() * currentIdx);
+    currentIdx--;
+
+    [choices[currentIdx], choices[randomIdx]] = [
+      choices[randomIdx], choices[currentIdx]];
+  }
+}
+
+export const randomizeTest = (test: Test): Test => {
+  var newTest: Test = { questions: [], answers: [] };
+
+  test.questions.forEach((question: Question, idx: number) => {
+    if(question.choices) {
+      const currentChoice = choiceLetters[test.answers[idx].choice!];
+      shuffleChoices(question.choices);
+      test.answers[idx]!.choice = question.choices.indexOf(currentChoice);
+    }
+
+    newTest.questions.push(question);
+    newTest.answers.push(test.answers[idx]);
+  });
+
+  return newTest;
+}
+
 export const loadTest = async (path: string): Promise<Test | null> => {
   var test: Test = {
     questions: [],
@@ -83,7 +112,7 @@ export const loadTest = async (path: string): Promise<Test | null> => {
         },
       });
     });
-    return test;
+    return randomizeTest(test);
   } catch (error) {
     console.log(error);
   }
