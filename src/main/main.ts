@@ -9,6 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
+import fs from 'fs/promises';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -46,7 +47,7 @@ if (isDebug) {
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS'];
+  const extensions: string[] = []; //['REACT_DEVELOPER_TOOLS'];
 
   return installer
     .default(
@@ -133,5 +134,15 @@ app
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
     });
+    ipcMain.handle('file:read', async (_, filePath: string) => {
+    try {
+      const absolutePath = path.resolve(filePath);
+      const content = await fs.readFile(absolutePath, 'utf8');
+      return content;
+    } catch (error) {
+      console.error('Error reading file:', error);
+      throw error;
+    }
+  });
   })
   .catch(console.log);

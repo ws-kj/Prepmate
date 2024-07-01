@@ -97,13 +97,17 @@
   },
   "dependencies": {
     "@types/react-latex": "^2.0.3",
+    "csv-parse": "^5.5.6",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
+    "fs": "^0.0.1-security",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-latex": "^2.0.0",
-    "react-router-dom": "^6.16.0"
+    "react-papaparse": "^4.4.0",
+    "react-router-dom": "^6.16.0",
+    "react-timer-hook": "^3.0.7"
   },
   "devDependencies": {
     "@electron/notarize": "^2.1.0",

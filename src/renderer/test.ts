@@ -25,19 +25,23 @@ interface TestCsvRow {
 
 const choiceLetters: string[] = ["A", "B", "C", "D"];
 
-export const loadTest = (path: string): Test | null => {
+export const loadTest = async (path: string): Promise<Test | null> => {
+  var test: Test = {
+    questions: [],
+    answers: []
+  };
   try {
-    window.electron.fileSystem.readFile(path).then((file) => {
+    await window.electron.fileSystem.readFile(path).then((file) => {
       readString(file, {
         header: true,
         complete: (results) => {
-          const test: Test = {
+          test = {
             questions: [],
             answers: []
           };
           const rows: TestCsvRow[] = results.data as TestCsvRow[];
           rows.forEach((row: TestCsvRow, i: number) => {
-            const section: number = parseInt(row["Section"]);
+            const section: number = parseInt(row["Section"]) - 1;
             const type: QuestionType = section > 2 ? "math" : "reading";
             const passage: string | null = !row["Passage"] ? null : row["Passage"];
             const question: string = row["Question"];
@@ -76,14 +80,12 @@ export const loadTest = (path: string): Test | null => {
           });
 
           console.log(test);
-          return test;
         },
       });
-
     });
+    return test;
   } catch (error) {
     console.log(error);
-    return null;
   }
   return null;
 }

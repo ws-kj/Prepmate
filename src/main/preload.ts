@@ -2,7 +2,7 @@
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
-export type Channels = 'ipc-example';
+export type Channels = 'ipc-example' | 'file:read';
 
 const electronHandler = {
   ipcRenderer: {
@@ -20,6 +20,11 @@ const electronHandler = {
     },
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
+    },
+  },
+  fileSystem: {
+    readFile(filePath: string): Promise<string> {
+      return ipcRenderer.invoke('file:read', filePath);
     },
   },
 };

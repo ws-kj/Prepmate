@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Question, Answer } from './types';
 import QuestionView from './QuestionView';
 import TestHeader from './TestHeader';
@@ -10,6 +10,10 @@ interface TestViewProps {
 const TestView: React.FC<TestViewProps> = ({questions}) => {
   const [currentQuestion, setCurrentQuestion] = useState<Question>(questions[0]);
   const [answers, setAnswers] = useState<(Answer | null)[]>(Array(questions.length).fill(null));
+
+  useEffect(() => {
+    console.log(questions);
+  }, []);
 
   const handleAnswerEntry = (choiceIndex: number | null, freeResponse: string | null): void => {
     if(currentQuestion.id >= answers.length) {
