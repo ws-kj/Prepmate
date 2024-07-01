@@ -1,18 +1,18 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import { Question, Answer } from './types';
+import { Question, Answer, Test } from './types';
 import QuestionView from './QuestionView';
 import TestHeader from './TestHeader';
 
 interface TestViewProps {
-  questions: Question[];
+  test: Test;
 }
 
-const TestView: React.FC<TestViewProps> = ({questions}) => {
-  const [currentQuestion, setCurrentQuestion] = useState<Question>(questions[0]);
-  const [answers, setAnswers] = useState<(Answer | null)[]>(Array(questions.length).fill(null));
+const TestView: React.FC<TestViewProps> = ({test}) => {
+  const [currentQuestion, setCurrentQuestion] = useState<Question>(test.questions[0]);
+  const [answers, setAnswers] = useState<(Answer | null)[]>(Array(test.questions.length).fill(null));
 
   useEffect(() => {
-    console.log(questions);
+    console.log(test.questions);
   }, []);
 
   const handleAnswerEntry = (choiceIndex: number | null, freeResponse: string | null): void => {
@@ -32,15 +32,15 @@ const TestView: React.FC<TestViewProps> = ({questions}) => {
       return;
     }
 
-    setCurrentQuestion(questions[currentQuestion.id-1]);
+    setCurrentQuestion(test.questions[currentQuestion.id-1]);
   }
 
   const handleNext = (): void => {
-    if(currentQuestion.id >= questions.length-1) {
+    if(currentQuestion.id >= test.questions.length-1) {
       return;
     }
 
-    setCurrentQuestion(questions[currentQuestion.id+1]);
+    setCurrentQuestion(test.questions[currentQuestion.id+1]);
   }
 
   const getPrevChoice = (): number | null => {

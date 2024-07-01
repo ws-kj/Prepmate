@@ -20,3 +20,22 @@ export interface Test {
   questions: Question[],
   answers: Answer[],
 }
+
+export interface Break {
+  prevSection: number,
+  length: number
+}
+
+export interface ImageSrc {
+  questionId: number,
+  path: string
+}
+
+export interface TestConfig {
+  test: Test,
+  sectionLengths: number[],
+  breaks: Break[],
+  startTime: number,
+  markedQuestions: number[]
+  images: ImageSrc[]
+}
