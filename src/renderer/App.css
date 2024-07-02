@@ -189,3 +189,7 @@ button:hover {
   font-weight: bold;
 }
 
+.break-timer {
+  font-size: 28px;
+  font-weight: 600;
+}

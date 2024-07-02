@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Question, Answer, sectionTitles } from './types';
+import { parseTime } from './util';
 
 interface TestHeaderProps {
   section: number | null,
-  secondsLeft: number | null
+  secondsLeft: number | null,
+  inQuestion: boolean
 }
 
-const TestHeader: React.FC<TestHeaderProps> = ({section, secondsLeft}) => {
+const TestHeader: React.FC<TestHeaderProps> = ({section, secondsLeft, inQuestion}) => {
   const [sectionTitle, setSectionTitle] = useState<string>('');
   const [showTime, setShowTime] = useState<boolean>(true);
 
@@ -20,18 +22,12 @@ const TestHeader: React.FC<TestHeaderProps> = ({section, secondsLeft}) => {
     setShowTime(!showTime);
   }
 
-  const parseTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    const mStr = mins < 10 ? "0" + mins.toString() : mins.toString();
-    const sStr = secs < 10 ? "0" + secs.toString() : secs.toString();
-    return mStr.toString() + ":" + sStr;
-  }
-
   return (
     <div className="header">
       <div className="header-left">
+        {inQuestion &&
         <p className="section-title">{sectionTitle}</p>
+        }
       </div>
       <div className="header-center">
         {showTime && secondsLeft ?

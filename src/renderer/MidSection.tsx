@@ -13,6 +13,7 @@ const MidSection: React.FC<MidSectionProps> = ({prevSection}) => {
         <p className="section-title">{sectionTitles[prevSection]}</p>
         <p>Click next to begin</p>
         <p className="section-title">{sectionTitles[prevSection+1]}</p>
+        <p>Once you continue, you won't be able to return to this section.</p>
       </div>
     </div>
   );
