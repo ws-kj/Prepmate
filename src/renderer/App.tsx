@@ -22,7 +22,6 @@ export default function App() {
         test: newtest,
         sectionLengths: [32, 32, 35, 35],
         breaks: [{prevSection: 1, length: 10}],
-        startTime: 0,
         markedQuestions: [],
         images: []
       };
@@ -34,7 +33,7 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element=
-          { testConfig ? <TestView test={testConfig.test} /> : <></> }
+          { testConfig ? <TestView config={testConfig} /> : <></> }
         />
       </Routes>
     </Router>

@@ -1,31 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { Question, Answer } from './types';
+import { Question, Answer, sectionTitles } from './types';
 
 interface TestHeaderProps {
-  section: number | null
+  section: number | null,
+  secondsLeft: number | null
 }
 
-const TestHeader: React.FC<TestHeaderProps> = ({section}) => {
+const TestHeader: React.FC<TestHeaderProps> = ({section, secondsLeft}) => {
   const [sectionTitle, setSectionTitle] = useState<string>('');
+  const [showTime, setShowTime] = useState<boolean>(true);
 
   useEffect(() => {
-    switch(section) {
-      case 0:
-        setSectionTitle("Section 1, Module 1: Reading and Writing");
-        break;
-      case 1:
-        setSectionTitle("Section 1, Module 2: Reading and Writing");
-        break;
-      case 3:
-        setSectionTitle("Section 2, Module 1: Math");
-        break;
-      case 4:
-        setSectionTitle("Section 2, Module 2: Math");
-        break;
-      default:
-        break;
+    if(section != null && 0 <= section && section <= 3) {
+      setSectionTitle(sectionTitles[section]);
     }
   }, [section]);
+
+  const toggleTime = () => {
+    setShowTime(!showTime);
+  }
+
+  const parseTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    const mStr = mins < 10 ? "0" + mins.toString() : mins.toString();
+    const sStr = secs < 10 ? "0" + secs.toString() : secs.toString();
+    return mStr.toString() + ":" + sStr;
+  }
 
   return (
     <div className="header">
@@ -33,6 +34,16 @@ const TestHeader: React.FC<TestHeaderProps> = ({section}) => {
         <p className="section-title">{sectionTitle}</p>
       </div>
       <div className="header-center">
+        {showTime && secondsLeft ?
+          <div className="timer-container">
+            <p className="timer">{parseTime(secondsLeft)}</p>
+            <button className="toggle-timer" onClick={toggleTime}>Hide</button>
+          </div>
+        :
+          <div className="toggle-container">
+            <button className="toggle-timer show-time" onClick={toggleTime}>Show Time</button>
+          </div>
+        }
       </div>
       <div className="header-right">
       </div>

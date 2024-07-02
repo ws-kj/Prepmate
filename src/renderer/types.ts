@@ -35,7 +35,13 @@ export interface TestConfig {
   test: Test,
   sectionLengths: number[],
   breaks: Break[],
-  startTime: number,
   markedQuestions: number[]
   images: ImageSrc[]
 }
+
+export const sectionTitles = [
+  "Section 1, Module 1: Reading and Writing",
+  "Section 1, Module 2: Reading and Writing",
+  "Section 2, Module 1: Math",
+  "Section 2, Module 2: Math"
+];

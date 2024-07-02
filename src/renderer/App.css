@@ -7,10 +7,31 @@ body {
   overflow: hidden;
 }
 
+button {
+  font-size: 24px;
+}
+
 .header {
   display: flex;
   flex-direction: row;
   flex-grow: space-between;
+  height: 100px;
+  width: 100%;
+  border-bottom: 2px solid grey;
+}
+
+.header-center {
+  flex: 1;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.header-left {
+  flex: 1;
+}
+.header-right {
+  flex: 1;
 }
 
 .section-title {
@@ -19,8 +40,23 @@ body {
   margin-left: 20px;
 }
 
-button {
-  font-size: 24px;
+.timer {
+  margin-bottom: 0.33em;
+  margin-top: 0.66em;
+}
+
+.toggle-timer {
+  font-size: 16px;
+  background-color: lightgrey;
+  border-radius: 10px;
+  border: 2px solid grey;
+}
+
+.toggle-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .test-view {
@@ -124,13 +160,6 @@ button:hover {
   border: 2px solid blue;
   box-shadow: 0 4px 8px rgba(0, 0, 255, 0.2);
 }
-
-.header {
-  height: 100px;
-  width: 100%;
-  border-bottom: 2px solid grey;
-}
-
 .footer {
   position: absolute;
   bottom: 0;
