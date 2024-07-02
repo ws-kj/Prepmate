@@ -189,6 +189,11 @@ button:hover {
   font-weight: bold;
 }
 
+.nav-disabled {
+  background-color: grey !important;
+  cursor: default !important;
+}
+
 .break-timer {
   font-size: 28px;
   font-weight: 600;

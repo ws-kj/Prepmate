@@ -21,10 +21,29 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
 
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
 
+  const [canClickNext, setCanClickNext] = useState<boolean>(true);
+  const [canClickBack, setCanClickBack] = useState<boolean>(true);
+
   useEffect(() => {
     console.log(config.test.questions);
     beginCountdown(config.sectionLengths[0]);
   }, []);
+
+  useEffect(() => {
+    setCanClickNext(!inBreak && currentQuestion.id < config.test.questions.length-1);
+
+    if(inMidSection) {
+      setCanClickBack(true);
+    } else {
+      setCanClickBack(!inBreak && currentQuestion.id != 0 &&
+        config.test.questions[currentQuestion.id-1].section == currentQuestion.section);
+
+      if(config.breaks.some(b => b.prevSection == currentQuestion.section) &&
+        config.test.questions[currentQuestion.id+1].section != currentQuestion.section) {
+        setCanClickNext(false);
+      }
+    }
+  }, [currentQuestion, inBreak, inMidSection]);
 
   const handleCountdownEnd = () => {
     const s = currentQuestion.section;
@@ -93,8 +112,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
       return;
     }
 
-    if(inBreak || currentQuestion.id == 0 ||
-        config.test.questions[currentQuestion.id-1].section != currentQuestion.section) {
+    if(!canClickBack) {
       return;
     }
 
@@ -102,7 +120,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
   }
 
   const handleNext = (): void => {
-    if(inBreak || currentQuestion.id >= config.test.questions.length-1) {
+    if(!canClickNext) {
       return;
     }
 
@@ -161,8 +179,18 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
       <div className="footer">
         {! inBreak &&
         <div className="nav-button-container">
-          <button className="nav-button" onClick={handleBack}>Back</button>
-          <button className="nav-button" onClick={handleNext}>Next</button>
+          <button
+            className={"nav-button " + (!canClickBack ? 'nav-disabled' : '')}
+            onClick={handleBack}
+          >
+            Back
+          </button>
+          <button
+            className={"nav-button " + (!canClickNext ? 'nav-disabled' : '')}
+            onClick={handleNext}
+          >
+            Next
+          </button>
         </div>
         }
       </div>
