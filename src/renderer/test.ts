@@ -74,6 +74,7 @@ export const loadTest = async (path: string): Promise<Test | null> => {
 
           const rows: TestCsvRow[] = results.data as TestCsvRow[];
           rows.forEach((row: TestCsvRow, i: number) => {
+            console.log(row["Section"]);
             const section: number = parseInt(row["Section"]) - 1;
             const type: QuestionType = section > 1 ? "math" : "reading";
             const passage: string | null = !row["Passage"] ? null : row["Passage"];
@@ -100,6 +101,7 @@ export const loadTest = async (path: string): Promise<Test | null> => {
             if(i == 0 || prevSection == section) {
               qNum++;
             } else {
+
               qNum = 1;
             }
 
