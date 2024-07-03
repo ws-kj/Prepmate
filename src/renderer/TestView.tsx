@@ -5,6 +5,7 @@ import QuestionView from './QuestionView';
 import TestHeader from './TestHeader';
 import MidSection from './MidSection';
 import BreakView from './BreakView';
+import Review from './Review';
 
 import { findLastIndex } from './util';
 
@@ -16,7 +17,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
   const [currentQuestion, setCurrentQuestion] = useState<Question>(config.test.questions[0]);
   const [answers, setAnswers] = useState<(Answer | null)[]>(Array(config.test.questions.length).fill(null));
 
-  const [inMidSection, setInMidSection] = useState<boolean>(false);
+  const [inReview, setInReview] = useState<boolean>(false);
   const [inBreak, setInBreak] = useState<boolean>(false);
 
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
@@ -30,20 +31,21 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
   }, []);
 
   useEffect(() => {
-    setCanClickNext(!inBreak && currentQuestion.id < config.test.questions.length-1);
+//    setCanClickNext(!inBreak && currentQuestion.id < config.test.questions.length-1);
 
-    if(inMidSection) {
+    if(inReview) {
       setCanClickBack(true);
     } else {
       setCanClickBack(!inBreak && currentQuestion.id != 0 &&
         config.test.questions[currentQuestion.id-1].section == currentQuestion.section);
-
+/*
       if(config.breaks.some(b => b.prevSection == currentQuestion.section) &&
         config.test.questions[currentQuestion.id+1].section != currentQuestion.section) {
         setCanClickNext(false);
       }
+*/
     }
-  }, [currentQuestion, inBreak, inMidSection]);
+  }, [currentQuestion, inBreak, inReview]);
 
   const handleCountdownEnd = () => {
     const s = currentQuestion.section;
@@ -70,7 +72,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
       console.log(newIdx);
       const newTime = config.sectionLengths[config.test.questions[newIdx].section];
       beginCountdown(newTime);
-      setInMidSection(false);
+      setInReview(false);
       setCurrentQuestion(config.test.questions[newIdx]);
     }
   }
@@ -107,8 +109,8 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
   };
 
   const handleBack = (): void => {
-    if(inMidSection && secondsLeft != 0) {
-      setInMidSection(false);
+    if(inReview && secondsLeft != 0) {
+      setInReview(false);
       return;
     }
 
@@ -124,20 +126,55 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
       return;
     }
 
-    if(inMidSection || currentQuestion.section == config.test.questions[currentQuestion.id+1].section) {
+    if(inBreak) {
+      handleCountdownEnd();
+      return;
+    }
+
+    if(!inReview) {
+      if(currentQuestion.id == config.test.questions.length-1 ||
+        currentQuestion.section != config.test.questions[currentQuestion.id+1].section) {
+        setInReview(true);
+      } else {
+        setCurrentQuestion(config.test.questions[currentQuestion.id+1]);
+      }
+    } else {
+      if(config.breaks.some(b => b.prevSection == currentQuestion.section)) {
+        beginBreak();
+      } else {
+        if(currentQuestion.id != config.test.questions.length-1) {
+          const newTime = config.sectionLengths[config.test.questions[currentQuestion.id+1].section];
+          beginCountdown(newTime);
+          setCurrentQuestion(config.test.questions[currentQuestion.id+1]);
+          setInReview(false);
+        } else {
+          alert("grading not implemented yet!");
+        }
+      }
+    }
+
+/*
+    if(inReview || currentQuestion.section == config.test.questions[currentQuestion.id+1].section) {
       const newTime = config.sectionLengths[config.test.questions[currentQuestion.id+1].section];
       beginCountdown(newTime);
       setCurrentQuestion(config.test.questions[currentQuestion.id+1]);
-      setInMidSection(false);
+      setInReview(false);
     } else {
       if(!config.breaks.some(b => b.prevSection == currentQuestion.section)) {
-        setInMidSection(true);
+        setInReview(true);
       }
     }
+    */
+  }
+
+  const jumpToQuestion = (num: number) => {
+    setInReview(false);
+    setCurrentQuestion(config.test.questions[num]);
   }
 
   const beginBreak = () => {
     const currentBreak = config.breaks.find(b => b.prevSection == currentQuestion.section);
+    setInReview(false);
     setInBreak(true);
     if(!currentBreak) return;
     beginCountdown(currentBreak.length);
@@ -160,15 +197,20 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
       <TestHeader
         section={currentQuestion.section}
         secondsLeft={secondsLeft}
-        inQuestion={(!inBreak && !inMidSection)}
+        inQuestion={(!inBreak && !inReview)}
       />
-      { inMidSection &&
-      <MidSection prevSection={currentQuestion.section}/>
+      { inReview &&
+        <Review
+          section={currentQuestion.section}
+          test={config.test}
+          jumpToQuestion={jumpToQuestion}
+        />
+      //<MidSection prevSection={currentQuestion.section}/>
       }
       { inBreak && secondsLeft &&
       <BreakView secondsLeft={secondsLeft} />
       }
-      { !inMidSection && !inBreak &&
+      { !inReview && !inBreak &&
       <QuestionView
         question={currentQuestion}
         handleAnswerEntry={handleAnswerEntry}
@@ -177,7 +219,6 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
       />
       }
       <div className="footer">
-        {! inBreak &&
         <div className="nav-button-container">
           <button
             className={"nav-button " + (!canClickBack ? 'nav-disabled' : '')}
@@ -192,7 +233,6 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
             Next
           </button>
         </div>
-        }
       </div>
     </div>
   );
