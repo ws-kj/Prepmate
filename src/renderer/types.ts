@@ -3,6 +3,7 @@ export type QuestionType = "reading" | "math";
 export interface Question {
   id: number;
   section: number;
+  qNumber: number;
   type: QuestionType;
   passage: string | null;
   question: string;

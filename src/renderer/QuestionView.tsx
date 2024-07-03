@@ -51,7 +51,7 @@ const QuestionView: React.FC<QuestionViewProps> =
         <div className="question-container">
           <div className="question-number-container">
             <div className="question-number">
-              {question.id + 1}
+              {question.qNumber}
             </div>
           </div>
           <p className="question">
