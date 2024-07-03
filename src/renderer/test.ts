@@ -75,9 +75,9 @@ export const loadTest = async (path: string): Promise<Test | null> => {
           const rows: TestCsvRow[] = results.data as TestCsvRow[];
           rows.forEach((row: TestCsvRow, i: number) => {
             const section: number = parseInt(row["Section"]) - 1;
-            const type: QuestionType = section > 2 ? "math" : "reading";
+            const type: QuestionType = section > 1 ? "math" : "reading";
             const passage: string | null = !row["Passage"] ? null : row["Passage"];
-            const question: string = row["Question"];
+            var question: string = row["Question"];
 
             var choices: string[] | null = null;
             var correct: number | null = null;
@@ -94,6 +94,8 @@ export const loadTest = async (path: string): Promise<Test | null> => {
               .split(",")
               .map(word => word.trim())
               .filter(word => word.length > 0);
+
+            question = question.replace(/\\\\/g, '\\');
 
             if(i == 0 || prevSection == section) {
               qNum++;

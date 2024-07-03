@@ -199,3 +199,48 @@ button:hover {
   font-size: 28px;
   font-weight: 600;
 }
+
+.review-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+}
+
+.review-header {
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.review-header .section-title {
+  margin: auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.question-boxes {
+  display: flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.question-box {
+  border: 2px dashed black;
+  color: blue;
+  width: 42px;
+  height: 35px;
+  padding-top: 7px;
+  text-align: center;
+  margin: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.answered {
+  border: 2px solid blue;
+  background-color: blue;
+  color: white;
+}

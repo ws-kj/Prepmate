@@ -203,6 +203,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
         <Review
           section={currentQuestion.section}
           test={config.test}
+          studentAnswers={answers}
           jumpToQuestion={jumpToQuestion}
         />
       //<MidSection prevSection={currentQuestion.section}/>

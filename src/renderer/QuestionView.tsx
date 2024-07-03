@@ -40,7 +40,7 @@ const QuestionView: React.FC<QuestionViewProps> =
 
   return (
     <div className="question-view">
-      {question.type == "reading" &&
+      {question.passage != null &&
         <div className="panel passage-panel">
           <p className="passage">
             {question.passage}
@@ -55,11 +55,7 @@ const QuestionView: React.FC<QuestionViewProps> =
             </div>
           </div>
           <p className="question">
-            {question.type == "reading" ?
-              question.question
-            :
-              <Latex>{question.question}</Latex>
-            }
+            <Latex>{question.question}</Latex>
           </p>
         </div>
         {question.choices != null ?

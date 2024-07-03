@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Question, Test, sectionTitles } from './types';
+import { Question, Answer, Test, sectionTitles } from './types';
 
 interface ReviewProps {
   section: number,
   test: Test,
+  studentAnswers: (Answer | null)[],
   jumpToQuestion: (num: number) => void
 }
 
-const Review: React.FC<ReviewProps> = ({section, test, jumpToQuestion}) => {
+const Review: React.FC<ReviewProps> = ({section, test, studentAnswers, jumpToQuestion}) => {
   const [sectionTitle, setSectionTitle] = useState<string>(sectionTitles[section]);
   const [questions, setQuestions] = useState<Question[]>([]);
 
@@ -22,13 +23,13 @@ const Review: React.FC<ReviewProps> = ({section, test, jumpToQuestion}) => {
       </div>
       <div className="question-boxes">
         {questions.map((q, i) => {
-          const answered = (test.answers[q.id] != null);
+          const answered = (studentAnswers[q.id] != null);
           return (
             <div
-              className={"question-box " + answered ? "answered" : ""}
+              className={"question-box " + (answered ? "answered" : "")}
               onClick={() => {jumpToQuestion(q.id)}}
             >
-              <p>{q.qNumber}</p>
+              {q.qNumber}
             </div>
           );
         })}
