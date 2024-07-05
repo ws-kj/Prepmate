@@ -3,18 +3,23 @@ import { Question } from './types';
 import ChoiceLetter from './ChoiceLetter';
 import './App.css';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBookmark as bookmarkOutline } from '@fortawesome/free-regular-svg-icons';
+import { faBookmark as bookmarkSolid } from '@fortawesome/free-solid-svg-icons';
 
 var Latex = require('react-latex');
 
 interface QuestionViewProps {
   question: Question;
   handleAnswerEntry: (choiceIndex: number | null, freeResponse: string | null) => void;
+  toggleMarked: (id: number) => void;
+  isMarked: boolean;
   getPrevChoice: () => number | null;
   getPrevFreeResponse: () => string;
 }
 
 const QuestionView: React.FC<QuestionViewProps> =
-    ({question, handleAnswerEntry, getPrevChoice, getPrevFreeResponse}) => {
+    ({question, handleAnswerEntry, toggleMarked, isMarked, getPrevChoice, getPrevFreeResponse}) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(getPrevChoice());
   const [freeResponseValue, setFreeResponseValue] = useState<string>('');
 
@@ -53,6 +58,12 @@ const QuestionView: React.FC<QuestionViewProps> =
             <div className="question-number">
               {question.qNumber}
             </div>
+            <FontAwesomeIcon
+              className={"mark-icon " + (isMarked ? "mark-icon-solid" : "")}
+              icon={(isMarked ? bookmarkSolid : bookmarkOutline)}
+              onClick={()=>{toggleMarked(question.id)}}
+            />
+            <p className="mark-label">Mark for Review</p>
           </div>
           <p className="question">
             <Latex>{question.question}</Latex>

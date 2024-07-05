@@ -105,6 +105,7 @@ button:hover {
   width: 100%;
   min-width: 350px;
   background-color: lightgrey;
+  display: flex;
 }
 
 .question-number {
@@ -114,6 +115,24 @@ button:hover {
   padding-bottom: 5px;
   width: 50px;
   text-align: center;
+}
+
+.mark-icon {
+  margin-top: 7px;
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+.mark-icon-solid {
+  color: darkred;
+}
+
+.mark-label {
+  margin: 0;
+  margin-top: 7px;
+  margin-left: 7px;
+  padding: 0;
+  font-size: 20px;
 }
 
 .choices-container {
@@ -189,6 +208,11 @@ button:hover {
   padding:10px;
   padding-left: 20px;
   padding-right: 20px;
+  cursor: pointer;
+}
+
+.toggle-caret {
+  margin-left: 10px;
 }
 
 .nav-button {
@@ -233,7 +257,6 @@ button:hover {
   margin-bottom: 50px;
   text-align: center;
 }
-
 .question-boxes {
   display: flex;
   max-width: 100%;
@@ -251,10 +274,42 @@ button:hover {
   margin: 10px;
   font-weight: bold;
   cursor: pointer;
+  position: relative;
 }
 
 .answered {
   border: 2px solid blue;
   background-color: blue;
   color: white;
+}
+
+
+.review-popup {
+  position: absolute;
+  background-color: white;
+  border-radius: 10px;
+  border: 2px solid grey;
+  width: 70vw;
+  bottom: 99px;
+  padding: 30px;
+  max-width: 800px;
+}
+
+.review-popup .section-title {
+  margin: 0;
+  margin-bottom: 15px;
+}
+
+.close-popup {
+  position: absolute;
+  right: 30px;
+  top: 25px;
+  cursor: pointer;
+}
+
+.current-pin {
+  color: black;
+  position: absolute;
+  left: 12px;
+  top: -20px;
 }

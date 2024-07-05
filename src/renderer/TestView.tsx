@@ -1,13 +1,15 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Question, Answer, Test, TestConfig, Break } from './types';
 
+import { faCaretUp, faCaretDown } from '@fortawesome/free-solid-svg-icons';
+
 import QuestionView from './QuestionView';
 import TestHeader from './TestHeader';
-import MidSection from './MidSection';
 import BreakView from './BreakView';
 import Review from './Review';
 
 import { findLastIndex } from './util';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface TestViewProps {
   config: TestConfig;
@@ -16,8 +18,11 @@ interface TestViewProps {
 const TestView: React.FC<TestViewProps> = ({config}) => {
   const [currentQuestion, setCurrentQuestion] = useState<Question>(config.test.questions[0]);
   const [answers, setAnswers] = useState<(Answer | null)[]>(Array(config.test.questions.length).fill(null));
+  const [marked, setMarked] = useState<number[]>([]);
+
   const [inReview, setInReview] = useState<boolean>(false);
   const [inBreak, setInBreak] = useState<boolean>(false);
+  const [showReviewPopup, setShowReviewPopup] = useState<boolean>(false);
 
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
 
@@ -118,6 +123,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
     }
 
     setCurrentQuestion(config.test.questions[currentQuestion.id-1]);
+    setShowReviewPopup(false);
   }
 
   const handleNext = (): void => {
@@ -151,17 +157,28 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
         }
       }
     }
+    setShowReviewPopup(false);
   }
 
   const jumpToQuestion = (num: number) => {
     setInReview(false);
+    setShowReviewPopup(false);
     setCurrentQuestion(config.test.questions[num]);
+  }
+
+  const toggleMarked = (id: number) => {
+    if(marked.some(n => n == id)) {
+      setMarked(marked.filter(n => n != id));
+    } else {
+      setMarked(marked => [...marked, id]);
+    }
   }
 
   const beginBreak = () => {
     const currentBreak = config.breaks.find(b => b.prevSection == currentQuestion.section);
     setInReview(false);
     setInBreak(true);
+    setShowReviewPopup(false);
     if(!currentBreak) return;
     beginCountdown(currentBreak.length);
   }
@@ -178,6 +195,10 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
     return '';
   }
 
+  const toggleReviewPopup = () => {
+    setShowReviewPopup(!showReviewPopup);
+  }
+
   return (
     <div className="test-view">
       <TestHeader
@@ -189,8 +210,11 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
         <Review
           section={currentQuestion.section}
           test={config.test}
+          currentQ={null}
+          fullpage={true}
           studentAnswers={answers}
           jumpToQuestion={jumpToQuestion}
+          togglePopup={toggleReviewPopup}
         />
       }
       { inBreak && secondsLeft &&
@@ -200,14 +224,31 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
       <QuestionView
         question={currentQuestion}
         handleAnswerEntry={handleAnswerEntry}
+        toggleMarked={toggleMarked}
+        isMarked={marked.some(i => i == currentQuestion.id)}
         getPrevChoice={getPrevChoice}
         getPrevFreeResponse={getPrevFreeResponse}
       />
       }
+        { showReviewPopup &&
+        <Review
+          section={currentQuestion.section}
+          test={config.test}
+          currentQ={currentQuestion.qNumber}
+          fullpage={false}
+          studentAnswers={answers}
+          jumpToQuestion={jumpToQuestion}
+          togglePopup={toggleReviewPopup}
+        />
+        }
       <div className="footer">
         { !inReview && !inBreak &&
-        <div className="progress-container">
+        <div className="progress-container" onClick={toggleReviewPopup}>
           Question {currentQuestion.qNumber} of {totalQuestions}
+          <FontAwesomeIcon
+            className="toggle-caret"
+            icon={(showReviewPopup ? faCaretDown : faCaretUp)}
+          />
         </div>
         }
         <div className="nav-button-container">
