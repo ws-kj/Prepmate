@@ -2,6 +2,7 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Question, Answer, Test, TestConfig, Break } from './types';
 
 import { faCaretUp, faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import QuestionView from './QuestionView';
 import TestHeader from './TestHeader';
@@ -9,7 +10,6 @@ import BreakView from './BreakView';
 import Review from './Review';
 
 import { findLastIndex } from './util';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface TestViewProps {
   config: TestConfig;
@@ -53,6 +53,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
 
   const handleCountdownEnd = () => {
     const s = currentQuestion.section;
+    setShowReviewPopup(false);
 
     if(inBreak) {
       const newTime = config.sectionLengths[config.test.questions[currentQuestion.id+1].section];
@@ -166,6 +167,11 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
     setCurrentQuestion(config.test.questions[num]);
   }
 
+  const jumpToReview = () => {
+    setInReview(true);
+    setShowReviewPopup(false);
+  }
+
   const toggleMarked = (id: number) => {
     if(marked.some(n => n == id)) {
       setMarked(marked.filter(n => n != id));
@@ -210,11 +216,13 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
         <Review
           section={currentQuestion.section}
           test={config.test}
-          currentQ={null}
+          currentQ={currentQuestion.qNumber}
+          marked={marked}
           fullpage={true}
           studentAnswers={answers}
           jumpToQuestion={jumpToQuestion}
           togglePopup={toggleReviewPopup}
+          jumpToReview={jumpToReview}
         />
       }
       { inBreak && secondsLeft &&
@@ -235,10 +243,12 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
           section={currentQuestion.section}
           test={config.test}
           currentQ={currentQuestion.qNumber}
+          marked={marked}
           fullpage={false}
           studentAnswers={answers}
           jumpToQuestion={jumpToQuestion}
           togglePopup={toggleReviewPopup}
+          jumpToReview={jumpToReview}
         />
         }
       <div className="footer">

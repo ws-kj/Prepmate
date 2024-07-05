@@ -63,7 +63,7 @@ const QuestionView: React.FC<QuestionViewProps> =
               icon={(isMarked ? bookmarkSolid : bookmarkOutline)}
               onClick={()=>{toggleMarked(question.id)}}
             />
-            <p className="mark-label">Mark for Review</p>
+            <p className="mark-label" onClick={()=>{toggleMarked(question.id)}}>Mark for Review</p>
           </div>
           <p className="question">
             <Latex>{question.question}</Latex>
