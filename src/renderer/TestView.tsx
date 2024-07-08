@@ -19,10 +19,13 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
   const [currentQuestion, setCurrentQuestion] = useState<Question>(config.test.questions[0]);
   const [answers, setAnswers] = useState<(Answer | null)[]>(Array(config.test.questions.length).fill(null));
   const [marked, setMarked] = useState<number[]>([]);
+  const [crossouts, setCrossouts] = useState<number[][]>(Array(config.test.questions.length).fill([]));
 
   const [inReview, setInReview] = useState<boolean>(false);
   const [inBreak, setInBreak] = useState<boolean>(false);
+
   const [showReviewPopup, setShowReviewPopup] = useState<boolean>(false);
+  const [showCrossout, setShowCrossout] = useState<boolean>(false);
 
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
 
@@ -205,6 +208,26 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
     setShowReviewPopup(!showReviewPopup);
   }
 
+  const toggleChoiceCrossout = (questionId: number, choice: number) => {
+    if(crossouts[questionId].includes(choice)) {
+      setCrossouts(prev => {
+        const newState = [...prev];
+        newState[questionId] = newState[questionId].filter(c => c != choice);
+        return newState;
+      });
+    } else {
+      setCrossouts(prev => {
+        const newState = [...prev];
+        newState[questionId] = [...newState[questionId], choice];
+        return newState;
+      });
+    }
+  };
+
+  const getCrossoutState = (questionId: number, choice: number): boolean => {
+    return crossouts[questionId].includes(choice);
+  }
+
   return (
     <div className="test-view">
       <TestHeader
@@ -236,6 +259,10 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
         isMarked={marked.some(i => i == currentQuestion.id)}
         getPrevChoice={getPrevChoice}
         getPrevFreeResponse={getPrevFreeResponse}
+        showCrossout={showCrossout}
+        setShowCrossout={setShowCrossout}
+        toggleChoiceCrossout={toggleChoiceCrossout}
+        getCrossoutState={getCrossoutState}
       />
       }
         { showReviewPopup &&

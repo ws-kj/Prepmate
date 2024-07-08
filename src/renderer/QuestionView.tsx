@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import { Question } from './types';
-import ChoiceLetter from './ChoiceLetter';
+import Choice from './Choice';
 import './App.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,10 +16,24 @@ interface QuestionViewProps {
   isMarked: boolean;
   getPrevChoice: () => number | null;
   getPrevFreeResponse: () => string;
+  showCrossout: boolean,
+  setShowCrossout: (value: boolean) => void;
+  toggleChoiceCrossout: (questionId: number, choice: number) => void;
+  getCrossoutState: (questionId: number, choice: number) => boolean;
 }
 
-const QuestionView: React.FC<QuestionViewProps> =
-    ({question, handleAnswerEntry, toggleMarked, isMarked, getPrevChoice, getPrevFreeResponse}) => {
+const QuestionView: React.FC<QuestionViewProps> = ({
+  question,
+  handleAnswerEntry,
+  toggleMarked,
+  isMarked,
+  getPrevChoice,
+  getPrevFreeResponse,
+  showCrossout,
+  setShowCrossout,
+  toggleChoiceCrossout,
+  getCrossoutState,
+}) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(getPrevChoice());
   const [freeResponseValue, setFreeResponseValue] = useState<string>('');
 
@@ -36,6 +50,10 @@ const QuestionView: React.FC<QuestionViewProps> =
   const handleFrqChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setFreeResponseValue(event.target.value);
     handleAnswerEntry(null, event.target.value);
+  }
+
+  const toggleCrossout = () => {
+    setShowCrossout(!showCrossout);
   }
 
   useEffect(() => {
@@ -64,6 +82,12 @@ const QuestionView: React.FC<QuestionViewProps> =
               onClick={()=>{toggleMarked(question.id)}}
             />
             <p className="mark-label" onClick={()=>{toggleMarked(question.id)}}>Mark for Review</p>
+            <div
+              className={"toggle-crossout " + (showCrossout ? "toggle-crossout-on" : "")}
+              onClick={toggleCrossout}
+            >
+              <p>ABC</p>
+            </div>
           </div>
           <p className="question">
             <Latex>{question.question}</Latex>
@@ -72,14 +96,17 @@ const QuestionView: React.FC<QuestionViewProps> =
         {question.choices != null ?
           <div className="choices-container">
             {question.choices.map((choice, index) => (
-              <button
+              <Choice
                 key={index}
-                onClick={() => handleAnswerClick(index)}
-                className={selectedAnswer === index ? "choice-button selected" : "choice-button"}
-              >
-                <ChoiceLetter index={index} />
-                <Latex>{choice}</Latex>
-              </button>
+                questionId={question.id}
+                index={index}
+                choice={choice}
+                handleAnswerClick={handleAnswerClick}
+                selectedAnswer={selectedAnswer}
+                showCrossout={showCrossout}
+                toggleChoiceCrossout={toggleChoiceCrossout}
+                getCrossoutState={getCrossoutState}
+              />
             ))}
           </div>
         :
