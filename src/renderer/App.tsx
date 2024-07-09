@@ -20,7 +20,7 @@ export default function App() {
 
       const config: TestConfig = {
         test: newtest,
-        sectionLengths: [5, 5, 5, 5],
+        sectionLengths: [5, 5, 20, 5],
         breaks: [{prevSection: 1, length: 5}],
         markedQuestions: [],
         images: []

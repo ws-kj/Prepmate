@@ -7,6 +7,24 @@ body {
   overflow: hidden;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #888 transparent;
+}
+
 button {
   font-size: 24px;
 }
@@ -30,8 +48,43 @@ button {
 .header-left {
   flex: 1;
 }
+
 .header-right {
   flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.tool-button {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 15px;
+  width: 100px;
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  cursor: pointer;
+  user-select: none;
+  margin-right: 20px;
+}
+
+.first-tool {
+  margin-left: auto;
+};
+
+.last-tool {
+  width: 30px;
+}
+
+.tool-icon {
+  font-size: 36px;
+  margin-bottom: 5px;
+}
+
+.tool-button p {
+  font-size: 16px;
+  margin: 0;
 }
 
 .section-title {
@@ -72,16 +125,23 @@ button {
   padding-top: 40px;
   justify-content: center;
   display: flex;
-  width: 90vh;
+  width: 90vw;
   flex-grow: 1;
   height: calc(100vh - 270px);
 }
 
 .panel {
   min-width: 45%;
-  padding: 15px;
+  max-width: 90vh;
+  padding-left: 15px;
   width: 100%;
   flex: 1;
+  flex-grow: 1;
+  max-height: 100% !important;
+}
+
+.question-panel {
+  overflow-y: scroll;
 }
 
 .passage-panel {
@@ -89,6 +149,21 @@ button {
   overflow-y: scroll;
   flex-grow: 1;
   max-height: 100% !important;
+}
+
+.calculator-panel {
+  margin-right: 0;
+  padding-right: 0;
+  display: inline;
+}
+
+.calculator {
+  height: 95%;
+  width: 98%;
+}
+
+.calc-hidden {
+  display: none;
 }
 
 .passage {
@@ -470,3 +545,4 @@ button:hover {
   padding-left: 12px;
   padding-right: 12px;
 }
+

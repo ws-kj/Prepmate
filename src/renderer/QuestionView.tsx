@@ -17,6 +17,7 @@ interface QuestionViewProps {
   getPrevChoice: () => number | null;
   getPrevFreeResponse: () => string;
   showCrossout: boolean,
+  showCalculator: boolean,
   setShowCrossout: (value: boolean) => void;
   toggleChoiceCrossout: (questionId: number, choice: number) => void;
   getCrossoutState: (questionId: number, choice: number) => boolean;
@@ -30,6 +31,7 @@ const QuestionView: React.FC<QuestionViewProps> = ({
   getPrevChoice,
   getPrevFreeResponse,
   showCrossout,
+  showCalculator,
   setShowCrossout,
   toggleChoiceCrossout,
   getCrossoutState,
@@ -70,6 +72,9 @@ const QuestionView: React.FC<QuestionViewProps> = ({
           </p>
         </div>
       }
+      <div className={"panel calculator-panel " + ((!showCalculator) ? "calc-hidden" : "")}>
+        <iframe className="calculator" src="https://www.desmos.com/calculator"/>
+      </div>
       <div className="panel question-panel">
         <div className="question-container">
           <div className="question-number-container">

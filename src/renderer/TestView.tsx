@@ -26,6 +26,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
 
   const [showReviewPopup, setShowReviewPopup] = useState<boolean>(false);
   const [showCrossout, setShowCrossout] = useState<boolean>(false);
+  const [showCalculator, setShowCalculator] = useState<boolean>(false);
 
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
 
@@ -183,6 +184,10 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
     }
   }
 
+  const toggleCalculator = () => {
+    setShowCalculator(!showCalculator);
+  }
+
   const beginBreak = () => {
     const currentBreak = config.breaks.find(b => b.prevSection == currentQuestion.section);
     setInReview(false);
@@ -234,6 +239,8 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
         section={currentQuestion.section}
         secondsLeft={secondsLeft}
         inQuestion={(!inBreak && !inReview)}
+        inMath={currentQuestion && currentQuestion.type == "math"}
+        toggleCalculator={toggleCalculator}
       />
       { inReview &&
         <Review
@@ -260,6 +267,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
         getPrevChoice={getPrevChoice}
         getPrevFreeResponse={getPrevFreeResponse}
         showCrossout={showCrossout}
+        showCalculator={showCalculator}
         setShowCrossout={setShowCrossout}
         toggleChoiceCrossout={toggleChoiceCrossout}
         getCrossoutState={getCrossoutState}
