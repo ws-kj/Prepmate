@@ -1,5 +1,5 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
-import { Question, Answer, Test, TestConfig, Break } from './types';
+import React, { useState, useEffect, useRef } from 'react';
+import { Question, Answer, Test, TestConfig, Break, Annotation } from './types';
 
 import { faCaretUp, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,6 +8,8 @@ import QuestionView from './QuestionView';
 import TestHeader from './TestHeader';
 import BreakView from './BreakView';
 import Review from './Review';
+import Reference from './Reference';
+import AnnotationEditor from './AnnotationEditor';
 
 import { findLastIndex } from './util';
 
@@ -21,12 +23,19 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
   const [marked, setMarked] = useState<number[]>([]);
   const [crossouts, setCrossouts] = useState<number[][]>(Array(config.test.questions.length).fill([]));
 
+  const passageRef = useRef<HTMLParagraphElement | null>(null);
+  const [selectedText, setSelectedText] = useState<string>('');
+  const [selectionInfo, setSelectionInfo] = useState<SelectionInfo | null>(null);
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+
   const [inReview, setInReview] = useState<boolean>(false);
   const [inBreak, setInBreak] = useState<boolean>(false);
 
   const [showReviewPopup, setShowReviewPopup] = useState<boolean>(false);
   const [showCrossout, setShowCrossout] = useState<boolean>(false);
   const [showCalculator, setShowCalculator] = useState<boolean>(false);
+  const [showReference, setShowReference] = useState<boolean>(false);
+  const [showAnnotationEditor, setShowAnnotationEditor] = useState<boolean>(false);
 
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
 
@@ -36,7 +45,6 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
 
   useEffect(() => {
-    console.log(config.test.questions);
     updateTotalQuestions();
     beginCountdown(config.sectionLengths[0]);
   }, []);
@@ -58,7 +66,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
   const handleCountdownEnd = () => {
     const s = currentQuestion.section;
     setShowReviewPopup(false);
-
+    closeAnnotation();
     if(inBreak) {
       const newTime = config.sectionLengths[config.test.questions[currentQuestion.id+1].section];
       beginCountdown(newTime);
@@ -129,6 +137,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
 
     setCurrentQuestion(config.test.questions[currentQuestion.id-1]);
     setShowReviewPopup(false);
+    closeAnnotation();
   }
 
   const handleNext = (): void => {
@@ -163,17 +172,20 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
       }
     }
     setShowReviewPopup(false);
+    closeAnnotation();
   }
 
   const jumpToQuestion = (num: number) => {
     setInReview(false);
     setShowReviewPopup(false);
+    closeAnnotation();
     setCurrentQuestion(config.test.questions[num]);
   }
 
   const jumpToReview = () => {
     setInReview(true);
     setShowReviewPopup(false);
+    closeAnnotation();
   }
 
   const toggleMarked = (id: number) => {
@@ -188,10 +200,15 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
     setShowCalculator(!showCalculator);
   }
 
+  const toggleReference = () => {
+    setShowReference(!showReference);
+  }
+
   const beginBreak = () => {
     const currentBreak = config.breaks.find(b => b.prevSection == currentQuestion.section);
     setInReview(false);
     setInBreak(true);
+    closeAnnotation();
     setShowReviewPopup(false);
     if(!currentBreak) return;
     beginCountdown(currentBreak.length);
@@ -233,6 +250,60 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
     return crossouts[questionId].includes(choice);
   }
 
+  const handlePassageSelection = () => {
+    const selection = window.getSelection();
+    const selectedText = selection?.toString() || '';
+
+    if (selectedText && passageRef.current) {
+      const range = selection?.getRangeAt(0);
+      const textNode = passageRef.current.firstChild;
+
+      if (range && textNode) {
+        const start = range.startOffset;
+        const end = range.endOffset;
+
+        setSelectedText(selectedText);
+        setSelectionInfo({ start, end });
+
+
+        console.log(selectedText);
+      }
+    } else {
+      setSelectedText('');
+      setSelectionInfo(null);
+    }
+  };
+
+  const closeAnnotation = () => {
+    setSelectedText('');
+    setSelectionInfo(null);
+    setShowAnnotationEditor(false);
+  }
+
+  const openAnnotation = () => {
+    if(selectedText == '' || selectionInfo == null) return;
+    toggleAnnotationEditor();
+  }
+
+  const toggleAnnotationEditor = () => {
+    if(showAnnotationEditor) {
+      closeAnnotation();
+    } else {
+      setShowAnnotationEditor(true);
+    }
+  }
+
+  const setAnnotation = (annotation: Annotation) => {
+    if (annotation.text == "") return;
+    if(annotations.some(a => a.questionId == annotation.questionId && a.start == annotation.start)) {
+      setAnnotations(prev => [...prev.filter(a =>
+        a.questionId != annotation.questionId ||
+        a.start != annotation.start), annotation]);
+    } else {
+      setAnnotations(prev => [...prev, annotation]);
+    }
+  };
+
   return (
     <div className="test-view">
       <TestHeader
@@ -240,8 +311,28 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
         secondsLeft={secondsLeft}
         inQuestion={(!inBreak && !inReview)}
         inMath={currentQuestion && currentQuestion.type == "math"}
+        hasPassage={currentQuestion.passage != null}
         toggleCalculator={toggleCalculator}
+        toggleReference={toggleReference}
+        openAnnotation={openAnnotation}
       />
+      { !inReview && !inBreak && showAnnotationEditor &&
+        <AnnotationEditor
+          questionId={currentQuestion.id}
+          passageText={selectedText}
+          start={selectionInfo.start}
+          end={selectionInfo.end}
+          text={''}
+          toggleAnnotationEditor={toggleAnnotationEditor}
+          setAnnotation={setAnnotation}
+        />
+      }
+      { !inReview && !inBreak && showReference &&
+      <Reference
+        showReference={showReference}
+        toggleReference={toggleReference}
+      />
+      }
       { inReview &&
         <Review
           section={currentQuestion.section}
@@ -264,6 +355,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
         handleAnswerEntry={handleAnswerEntry}
         toggleMarked={toggleMarked}
         isMarked={marked.some(i => i == currentQuestion.id)}
+        passageRef={passageRef}
         getPrevChoice={getPrevChoice}
         getPrevFreeResponse={getPrevFreeResponse}
         showCrossout={showCrossout}
@@ -271,6 +363,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
         setShowCrossout={setShowCrossout}
         toggleChoiceCrossout={toggleChoiceCrossout}
         getCrossoutState={getCrossoutState}
+        handlePassageSelection={handlePassageSelection}
       />
       }
         { showReviewPopup &&

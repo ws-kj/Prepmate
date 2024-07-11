@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from 'react';
+import React, { useState, ChangeEvent, useEffect, RefObject } from 'react';
 import { Question } from './types';
 import Choice from './Choice';
 import './App.css';
@@ -14,6 +14,7 @@ interface QuestionViewProps {
   handleAnswerEntry: (choiceIndex: number | null, freeResponse: string | null) => void;
   toggleMarked: (id: number) => void;
   isMarked: boolean;
+  passageRef: RefObject<HTMLParagraphElement>;
   getPrevChoice: () => number | null;
   getPrevFreeResponse: () => string;
   showCrossout: boolean,
@@ -21,6 +22,7 @@ interface QuestionViewProps {
   setShowCrossout: (value: boolean) => void;
   toggleChoiceCrossout: (questionId: number, choice: number) => void;
   getCrossoutState: (questionId: number, choice: number) => boolean;
+  handlePassageSelection: () => void;
 }
 
 const QuestionView: React.FC<QuestionViewProps> = ({
@@ -28,6 +30,7 @@ const QuestionView: React.FC<QuestionViewProps> = ({
   handleAnswerEntry,
   toggleMarked,
   isMarked,
+  passageRef,
   getPrevChoice,
   getPrevFreeResponse,
   showCrossout,
@@ -35,6 +38,7 @@ const QuestionView: React.FC<QuestionViewProps> = ({
   setShowCrossout,
   toggleChoiceCrossout,
   getCrossoutState,
+  handlePassageSelection
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(getPrevChoice());
   const [freeResponseValue, setFreeResponseValue] = useState<string>('');
@@ -67,13 +71,16 @@ const QuestionView: React.FC<QuestionViewProps> = ({
     <div className="question-view">
       {question.passage != null &&
         <div className="panel passage-panel">
-          <p className="passage">
+          <p className="passage"
+            ref={passageRef}
+            onMouseUp={handlePassageSelection}
+            onKeyUp={handlePassageSelection}>
             {question.passage}
           </p>
         </div>
       }
       <div className={"panel calculator-panel " + ((!showCalculator) ? "calc-hidden" : "")}>
-        <iframe className="calculator" src="https://www.desmos.com/calculator"/>
+        <iframe className="calculator" src="https://www.desmos.com/testing/cb-digital-sat/graphing"/>
       </div>
       <div className="panel question-panel">
         <div className="question-container">

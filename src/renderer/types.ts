@@ -46,3 +46,10 @@ export const sectionTitles = [
   "Section 2, Module 1: Math",
   "Section 2, Module 2: Math"
 ];
+
+export interface Annotation {
+  questionId: number;
+  start: number;
+  end: number;
+  text: string;
+}

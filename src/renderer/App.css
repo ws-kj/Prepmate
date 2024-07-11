@@ -131,7 +131,7 @@ button {
 }
 
 .panel {
-  min-width: 45%;
+  min-width: 50%;
   max-width: 90vh;
   padding-left: 15px;
   width: 100%;
@@ -142,6 +142,7 @@ button {
 
 .question-panel {
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .passage-panel {
@@ -149,6 +150,10 @@ button {
   overflow-y: scroll;
   flex-grow: 1;
   max-height: 100% !important;
+}
+
+.passage::selection {
+  background: yellow;
 }
 
 .calculator-panel {
@@ -293,6 +298,7 @@ button:hover {
 
 .crossout-container {
   height: 100%;
+  margin-right: 10px;
   margin-left: 10px;
   margin-top: -15px;
   font-weight: bold;
@@ -456,6 +462,7 @@ button:hover {
 
 
 .review-popup {
+  z-index: 999;
   position: absolute;
   background-color: white;
   border-radius: 10px;
@@ -466,7 +473,30 @@ button:hover {
   max-width: 800px;
 }
 
+.reference {
+  z-index: 888;
+  position: absolute;
+  background-color: white;
+  border-radius: 10px;
+  border: 2px solid grey;
+  width: 70vw;
+  top: 130px;
+  padding: 30px;
+  max-width: 800px;
+}
+
+.ref-image-container {
+  max-height: calc(100vh - 347px);
+  overflow-y: scroll;
+  padding-bottom: 15px;
+}
+
 .review-popup .section-title {
+  margin: 0;
+  margin-bottom: 15px;
+}
+
+.reference .section-title {
   margin: 0;
   margin-bottom: 15px;
 }
@@ -546,3 +576,79 @@ button:hover {
   padding-right: 12px;
 }
 
+.annotation-editor {
+  position: absolute;
+  background-color: lightgrey;
+  z-index: 1000;
+  width: 100%;
+  top: 60%;
+  height: 40vh;
+}
+
+.annotation-editor p {
+  margin: 0;
+}
+
+.annotation-header {
+  background-color: black;
+  color: white;
+  width: 100%;
+  display: flex;
+  height: 60px;
+  align-items: center;
+}
+
+.close-annotation-editor {
+  top: 19px;
+}
+
+.new-annotation {
+  font-weight: bold;
+  margin-left: 30px;
+}
+
+.annotation-editor-body {
+  height: calc(40vh - 60px);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.annotation-editor textarea {
+  margin-left: 30px;
+  border: 1px solid grey;
+  margin-top: 30px;
+  resize: none;
+  width: 70vw;
+  font-size: 24px;
+  font-family: sans-serif;
+  padding: 10px;
+  height: 100%;
+  margin-bottom: 30px;
+}
+
+.annotation-footer {
+  margin-bottom: 30px;
+  margin-left: 30px;
+}
+
+.save-annotation {
+  background-color: blue;
+  color: white;
+  border-radius: 50px;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.cancel-annotation {
+  background-color: transparent;
+  border: none;
+  color: black;
+  font-weight: bold;
+  font-size: 20px;
+}

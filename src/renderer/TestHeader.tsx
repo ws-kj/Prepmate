@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Question, Answer, sectionTitles } from './types';
 import { parseTime } from './util';
-import { faCalculator, faShapes } from '@fortawesome/free-solid-svg-icons';
+import { faCalculator, faShapes, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface TestHeaderProps {
@@ -9,11 +9,14 @@ interface TestHeaderProps {
   secondsLeft: number | null;
   inQuestion: boolean;
   inMath: boolean;
+  hasPassage: boolean;
   toggleCalculator: () => void;
+  toggleReference: () => void;
+  openAnnotation: () => void;
 }
 
 const TestHeader: React.FC<TestHeaderProps> = ({
-  section, secondsLeft, inQuestion, inMath, toggleCalculator
+  section, secondsLeft, inQuestion, inMath, hasPassage, toggleCalculator, toggleReference, openAnnotation
 }) => {
   const [sectionTitle, setSectionTitle] = useState<string>('');
   const [showTime, setShowTime] = useState<boolean>(true);
@@ -49,16 +52,22 @@ const TestHeader: React.FC<TestHeaderProps> = ({
       </div>
       <div className="header-right">
         <div className="first-tool"></div>
-        { inMath &&
+        { inQuestion && inMath &&
         <div className="tool-button" onClick={toggleCalculator}>
           <FontAwesomeIcon icon={faCalculator} className="tool-icon"/>
           <p>Calculator</p>
         </div>
         }
-        { inMath &&
-        <div className="tool-button">
+        { inQuestion && inMath &&
+        <div className="tool-button" onClick={toggleReference}>
           <FontAwesomeIcon icon={faShapes} className="tool-icon"/>
           <p>References</p>
+        </div>
+        }
+        { inQuestion && !inMath && hasPassage &&
+        <div className="tool-button" onClick={openAnnotation}>
+          <FontAwesomeIcon icon={faPenToSquare} className="tool-icon"/>
+          <p>Annotate</p>
         </div>
         }
         <div className="last-tool"></div>
