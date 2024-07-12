@@ -1,16 +1,52 @@
-import React, { useState, ChangeEvent, useEffect, RefObject } from 'react';
-import { Question } from './types';
+import React, { useState, ChangeEvent, useEffect, RefObject, ReactNode } from 'react';
+import { Question, Annotation } from './types';
 import Choice from './Choice';
 import './App.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark as bookmarkOutline } from '@fortawesome/free-regular-svg-icons';
-import { faBookmark as bookmarkSolid } from '@fortawesome/free-solid-svg-icons';
+import { faBookmark as bookmarkSolid, faClose } from '@fortawesome/free-solid-svg-icons';
 
 var Latex = require('react-latex');
 
+interface AnnotationHighlightProps {
+  passageText: string,
+  annotation: Annotation,
+  deleteAnnotation: (annotation: Annotation) => void;
+}
+
+const AnnotationHighlight: React.FC<AnnotationHighlightProps> = ({
+  passageText,
+  annotation,
+  deleteAnnotation
+}) => {
+  const [showAnnotation, setShowAnnotation] = useState<boolean>(false);
+
+  const toggleShow = () => {
+    setShowAnnotation(!showAnnotation);
+  }
+
+  return(
+    <span className="annotation-highlight" >
+      <span onClick={toggleShow}>{passageText}</span>
+      { showAnnotation &&
+      <div className="annotation-popup">
+        <div className="popup-text">{annotation.text}</div>
+        <FontAwesomeIcon
+          icon={faClose}
+          className="close-annotation-popup"
+          onClick={()=>deleteAnnotation(annotation)}
+        />
+      </div>
+      }
+    </span>
+  );
+
+}
+
 interface QuestionViewProps {
   question: Question;
+  annotations: Annotation[];
   handleAnswerEntry: (choiceIndex: number | null, freeResponse: string | null) => void;
   toggleMarked: (id: number) => void;
   isMarked: boolean;
@@ -23,10 +59,12 @@ interface QuestionViewProps {
   toggleChoiceCrossout: (questionId: number, choice: number) => void;
   getCrossoutState: (questionId: number, choice: number) => boolean;
   handlePassageSelection: () => void;
+  deleteAnnotation: (annotation: Annotation) => void;
 }
 
 const QuestionView: React.FC<QuestionViewProps> = ({
   question,
+  annotations,
   handleAnswerEntry,
   toggleMarked,
   isMarked,
@@ -38,10 +76,61 @@ const QuestionView: React.FC<QuestionViewProps> = ({
   setShowCrossout,
   toggleChoiceCrossout,
   getCrossoutState,
-  handlePassageSelection
+  handlePassageSelection,
+  deleteAnnotation
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(getPrevChoice());
   const [freeResponseValue, setFreeResponseValue] = useState<string>('');
+
+  const renderAnnotations = (text: string): ReactNode[] => {
+    const list = [...annotations.filter(a => a.questionId == question.id)];
+    //.sort((a, b) => a.start - b.start);
+    const result: ReactNode[] = [];
+
+    var pos = 0;
+    var last = 0;
+    /*
+    for(const a of list) {
+      if(a.start > pos) {
+      result.push(text.slice(pos, a.start));
+      }
+
+      result.push(
+        <span key={pos} className="annotation-highlight">
+          {text.slice(a.start, a.end)}
+        </span>
+      );
+
+      pos = a.end;
+    }
+
+    if(pos < text.length) {
+      result.push(text.slice(pos));
+    }
+*/
+    while(pos < text.length) {
+      for(const a of list) {
+        if(a.start == pos) {
+          result.push(text.slice(last, a.start));
+          result.push(
+            <AnnotationHighlight
+              key={pos}
+              passageText={text.slice(a.start, a.end)}
+              annotation={a}
+              deleteAnnotation={deleteAnnotation}
+            />
+          );
+          pos = a.end;
+          last = a.end;
+          break;
+        }
+      }
+      pos++;
+    }
+    result.push(text.slice(last, text.length));
+
+    return result;
+  }
 
   const handleAnswerClick = (index: number): void => {
     if(index === selectedAnswer) {
@@ -75,7 +164,7 @@ const QuestionView: React.FC<QuestionViewProps> = ({
             ref={passageRef}
             onMouseUp={handlePassageSelection}
             onKeyUp={handlePassageSelection}>
-            {question.passage}
+            {renderAnnotations(question.passage)}
           </p>
         </div>
       }

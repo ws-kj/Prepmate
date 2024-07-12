@@ -250,22 +250,35 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
     return crossouts[questionId].includes(choice);
   }
 
+  const getAbsoluteOffset = (container: Node, targetNode: Node, offset: number): number => {
+    let totalOffset = 0;
+    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      if (node === targetNode) {
+        return totalOffset + offset;
+      }
+      totalOffset += node.textContent?.length || 0;
+    }
+
+    return totalOffset;
+  }
+
   const handlePassageSelection = () => {
     const selection = window.getSelection();
     const selectedText = selection?.toString() || '';
 
     if (selectedText && passageRef.current) {
       const range = selection?.getRangeAt(0);
-      const textNode = passageRef.current.firstChild;
-
-      if (range && textNode) {
-        const start = range.startOffset;
-        const end = range.endOffset;
+      if (range) {
+        const startNode = range.startContainer;
+        const endNode = range.endContainer;
+        const startOffset = getAbsoluteOffset(passageRef.current, startNode, range.startOffset);
+        const endOffset = getAbsoluteOffset(passageRef.current, endNode, range.endOffset);
 
         setSelectedText(selectedText);
-        setSelectionInfo({ start, end });
-
-
+        setSelectionInfo({ start: startOffset, end: endOffset });
         console.log(selectedText);
       }
     } else {
@@ -295,14 +308,16 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
 
   const setAnnotation = (annotation: Annotation) => {
     if (annotation.text == "") return;
-    if(annotations.some(a => a.questionId == annotation.questionId && a.start == annotation.start)) {
-      setAnnotations(prev => [...prev.filter(a =>
-        a.questionId != annotation.questionId ||
-        a.start != annotation.start), annotation]);
-    } else {
-      setAnnotations(prev => [...prev, annotation]);
-    }
+    setAnnotations(prev => [...prev
+      .filter(a => !( a.start >= annotation.start && a.start <= annotation.end))
+      .filter(a => !( a.end >= annotation.start && a.end <= annotation.end))
+      .filter(a => !( a.start <= annotation.start && a.end >= annotation.end))
+      , annotation]);
   };
+
+  const deleteAnnotation = (annotation: Annotation) => {
+    setAnnotations(prev => [...prev.filter(a => a != annotation)]);
+  }
 
   return (
     <div className="test-view">
@@ -352,6 +367,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
       { !inReview && !inBreak &&
       <QuestionView
         question={currentQuestion}
+        annotations={annotations}
         handleAnswerEntry={handleAnswerEntry}
         toggleMarked={toggleMarked}
         isMarked={marked.some(i => i == currentQuestion.id)}
@@ -364,6 +380,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
         toggleChoiceCrossout={toggleChoiceCrossout}
         getCrossoutState={getCrossoutState}
         handlePassageSelection={handlePassageSelection}
+        deleteAnnotation={deleteAnnotation}
       />
       }
         { showReviewPopup &&
