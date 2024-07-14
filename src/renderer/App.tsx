@@ -12,7 +12,7 @@ export default function App() {
 
   useEffect(() => {
     async function getTest() {
-      const newtest = await loadTest("./tests/ExampleTest.csv");
+      const newtest = await loadTest("./tests/Short.csv");
       if(!newtest) {
         alert("failed to load test from file");
         return;
@@ -20,7 +20,7 @@ export default function App() {
 
       const config: TestConfig = {
         test: newtest,
-        sectionLengths: [5, 5, 20, 5],
+        sectionLengths: [5, 5, 5, 5],
         breaks: [{prevSection: 1, length: 5}],
         markedQuestions: [],
         images: []

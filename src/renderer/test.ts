@@ -42,7 +42,7 @@ export const randomizeTest = (test: Test): Test => {
 
   test.questions.forEach((question: Question, idx: number) => {
     if(question.choices) {
-      const currentChoice = choiceLetters[test.answers[idx].choice!];
+      const currentChoice = question.choices[test.answers[idx].choice!];
       shuffleChoices(question.choices);
       test.answers[idx]!.choice = question.choices.indexOf(currentChoice);
     }

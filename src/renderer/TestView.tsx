@@ -12,6 +12,7 @@ import Reference from './Reference';
 import AnnotationEditor from './AnnotationEditor';
 
 import { findLastIndex } from './util';
+import { gradeTest } from './grade';
 
 interface TestViewProps {
   config: TestConfig;
@@ -76,7 +77,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
     }
 
     if(currentQuestion.id == config.test.questions.length-1) {
-      alert("Test grading not yet implemented");
+      handleEndTest();
       return;
     }
 
@@ -92,6 +93,12 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
       setInReview(false);
       setCurrentQuestion(config.test.questions[newIdx]);
     }
+  }
+
+  const handleEndTest = () => {
+    console.log("end!");
+    const graded = gradeTest(config.test, answers);
+    console.log(graded);
   }
 
 
@@ -167,7 +174,7 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
           setCurrentQuestion(config.test.questions[currentQuestion.id+1]);
           setInReview(false);
         } else {
-          alert("grading not implemented yet!");
+          handleEndTest();
         }
       }
     }
