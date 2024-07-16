@@ -4,11 +4,19 @@ import icon from '../../assets/icon.svg';
 import './App.css';
 
 import TestView from './TestView';
+import ReportView from './ReportView';
 import { Question, Test, TestConfig, Break } from './types';
 import { loadTest } from './test';
+import { GradedTest } from './grade';
 
 export default function App() {
   const [testConfig, setTestConfig] = useState<TestConfig | null>(null);
+  const [gradedTest, setGradedTest] = useState<GradedTest | null>(null);
+
+  const openTestView = (gt: GradedTest, config: TestConfig) => {
+    setTestConfig(config);
+    setGradedTest(gt);
+  }
 
   useEffect(() => {
     async function getTest() {
@@ -19,11 +27,13 @@ export default function App() {
       }
 
       const config: TestConfig = {
+        testName: "Example Test",
+        studentName: "Student",
         test: newtest,
         sectionLengths: [5, 5, 5, 5],
         breaks: [{prevSection: 1, length: 5}],
-        markedQuestions: [],
-        images: []
+        images: [],
+        scoreScalePath: "",
       };
       setTestConfig(config);
     };
@@ -32,9 +42,12 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element=
-          { testConfig ? <TestView config={testConfig} /> : <></> }
-        />
+        { testConfig && !gradedTest &&
+        <Route path="/" element={<TestView config={testConfig} openTestView={openTestView} />} />
+        }
+        { gradedTest && testConfig &&
+        <Route path="/" element={<ReportView gt={gradedTest} />} />
+        }
       </Routes>
     </Router>
   );

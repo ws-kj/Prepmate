@@ -33,11 +33,13 @@ export interface ImageSrc {
 }
 
 export interface TestConfig {
+  testName: string,
+  studentName: string,
   test: Test,
   sectionLengths: number[],
   breaks: Break[],
-  markedQuestions: number[]
-  images: ImageSrc[]
+  images: ImageSrc[],
+  scoreScalePath: string,
 }
 
 export const sectionTitles = [

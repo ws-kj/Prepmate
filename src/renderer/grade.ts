@@ -1,4 +1,4 @@
-import { Question, Answer, Test } from './types';
+import { Question, Answer, Test, TestConfig } from './types';
 
 export interface GradedAnswer {
   correct: boolean;
@@ -16,20 +16,38 @@ export interface BlockResult {
 }
 
 export interface GradedTest {
+  testName: string;
+  studentName: string;
+  timestamp: string;
   answers: GradedAnswer[];
   sectionResults: BlockResult[];
   categoryResults: BlockResult[];
+  overallTotal: number;
+  readingTotal: number;
+  mathTotal: number;
 }
 
-export const gradeTest = (test: Test, responses: (Answer | null)[]): GradedTest => {
+export const gradeTest = (config: TestConfig, responses: (Answer | null)[]): GradedTest => {
+  const date = new Date();
+  var year = date.toLocaleString("default", { year: "numeric" });
+  var month = date.toLocaleString("default", { month: "2-digit" });
+  var day = date.toLocaleString("default", { day: "2-digit" });
+  const ts = year + "-" + month + "-" + day;
+
   var result: GradedTest = {
+    testName: config.testName,
+    studentName: config.studentName,
+    timestamp: ts,
+    overallTotal: 0,
+    readingTotal: 0,
+    mathTotal: 0,
     answers: [],
     sectionResults: [],
-    categoryResults: []
+    categoryResults: [],
   };
 
-  test.questions.forEach((q, i) => {
-    const a = test.answers[i];
+  config.test.questions.forEach((q, i) => {
+    const a = config.test.answers[i];
     const response = responses[i]
     var correct: boolean = false;
 
@@ -53,6 +71,11 @@ export const gradeTest = (test: Test, responses: (Answer | null)[]): GradedTest 
     }
 
     result.answers.push(graded);
+    if(correct) {
+      result.overallTotal += 1;
+      if(q.type == 'reading') result.readingTotal += 1;
+      if(q.type == 'math') result.mathTotal += 1;
+    }
 
     var secIdx = result.sectionResults.findIndex(b => b.section == q.section);
     if(secIdx == -1) {

@@ -15,6 +15,8 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { download, CancelError } from 'electron-dl';
+
 
 class AppUpdater {
   constructor() {
@@ -135,14 +137,23 @@ app
       if (mainWindow === null) createWindow();
     });
     ipcMain.handle('file:read', async (_, filePath: string) => {
-    try {
-      const absolutePath = path.resolve(filePath);
-      const content = await fs.readFile(absolutePath, 'utf8');
-      return content;
-    } catch (error) {
-      console.error('Error reading file:', error);
-      throw error;
-    }
-  });
+      try {
+        const absolutePath = path.resolve(filePath);
+        const content = await fs.readFile(absolutePath, 'utf8');
+        return content;
+      } catch (error) {
+        console.error('Error reading file:', error);
+        throw error;
+      }
+    });
+    ipcMain.handle('file:download', async (_, filePath: string, data: string) => {
+      try {
+        const absolutePath = path.resolve(filePath);
+        await fs.writeFile(absolutePath, data);
+      } catch (error) {
+        console.log('Error downloading data: ', error);
+        throw error;
+      }
+    });
   })
   .catch(console.log);

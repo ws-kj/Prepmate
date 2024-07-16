@@ -388,6 +388,11 @@ button:hover {
   cursor: pointer;
 }
 
+.student-name {
+  font-weight: bold;
+  margin-left: 50px;
+}
+
 .toggle-caret {
   margin-left: 10px;
 }
@@ -690,4 +695,108 @@ button:hover {
   margin-right: 15px;
   overflow-wrap: break-word;
   word-wrap: break-word;
+}
+
+.report-view {
+  display: flex;
+  flex-direction: column;
+}
+
+.report-view p {
+}
+
+.report-header {
+  height: 100px;
+  width: 100%;
+  border-bottom: 2px solid grey;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: row;
+}
+
+.back-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.back-arrow {
+  user-select: none;
+  cursor: pointer;
+  color: white;
+  background-color: grey;
+  border-radius: 100%;
+  height: 50px;
+  width: 50px;
+  position: relative;
+}
+
+.back-icon {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+}
+
+.report-header-left {
+  height: 100%;
+  align-items: center;
+}
+
+.report-header-right {
+  margin-left: auto;
+  margin-right: 50px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.view-answers {
+  background-color: blue;
+  outline: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 50px;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 20px;
+}
+
+.report-header p {
+  padding: 0;
+  margin: 16px;
+}
+
+.report-summary {
+  padding-top: 50px;
+  overflow-y: scroll;
+  max-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-section {
+  border: 1px solid grey;
+  margin: 50px;
+  margin-top: 0px;
+  max-width: 1200px;
+}
+
+.summary-section-header {
+  background-color: grey;
+  color: white;
+  padding: 15px;
+  padding-left: 5px;
+  font-weight: bold;
+}
+
+.summary-section-body {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.total-score {
+  font-weight: bold;
+  font-size: 36px;
 }

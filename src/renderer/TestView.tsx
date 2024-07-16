@@ -12,13 +12,17 @@ import Reference from './Reference';
 import AnnotationEditor from './AnnotationEditor';
 
 import { findLastIndex } from './util';
-import { gradeTest } from './grade';
+import { gradeTest, GradedTest } from './grade';
+
+
+import { ElectronHandler } from '../main/preload';
 
 interface TestViewProps {
   config: TestConfig;
+  openTestView: (gt: GradedTest, config: TestConfig) => void;
 }
 
-const TestView: React.FC<TestViewProps> = ({config}) => {
+const TestView: React.FC<TestViewProps> = ({config, openTestView}) => {
   const [currentQuestion, setCurrentQuestion] = useState<Question>(config.test.questions[0]);
   const [answers, setAnswers] = useState<(Answer | null)[]>(Array(config.test.questions.length).fill(null));
   const [marked, setMarked] = useState<number[]>([]);
@@ -97,7 +101,16 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
 
   const handleEndTest = () => {
     console.log("end!");
-    const graded = gradeTest(config.test, answers);
+    const graded = gradeTest(config, answers);
+
+    try {
+      const filename = "graded_tests/" + config.studentName + "_" + graded.timestamp + '.json';
+      window.electron.fileSystem.download(filename, JSON.stringify(graded));
+      openTestView(graded, config);
+    } catch (e) {
+      console.log(e);
+    }
+
     console.log(graded);
   }
 
@@ -404,6 +417,9 @@ const TestView: React.FC<TestViewProps> = ({config}) => {
         />
         }
       <div className="footer">
+        <div className="student-name">
+          <p>{config.studentName}</p>
+        </div>
         { !inReview && !inBreak &&
         <div className="progress-container" onClick={toggleReviewPopup}>
           Question {currentQuestion.qNumber} of {totalQuestions}
