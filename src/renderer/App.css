@@ -768,12 +768,26 @@ button:hover {
   margin: 16px;
 }
 
+.report-body {
+  display: flex;
+  flex-direction: row;
+}
+
 .report-summary {
   padding-top: 50px;
   overflow-y: scroll;
   max-height: calc(100vh - 100px);
   display: flex;
   flex-direction: column;
+  width: 50%;
+}
+
+.summary-title {
+  margin: 0;
+  margin-bottom: 25px;
+  margin-left: 50px;
+  font-size: 32px;
+  font-weight: bold;
 }
 
 .summary-section {
@@ -799,4 +813,57 @@ button:hover {
 .total-score {
   font-weight: bold;
   font-size: 36px;
+}
+
+.answers-table {
+  padding-left: 30px;
+  padding-right: 30px;
+  font-size: 24px;
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid grey;
+}
+
+.answers-table td {
+  text-align: center;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.answers-table th {
+  background-color: grey;
+  color: white;
+  font-size: 18px;
+  padding: 5px;
+}
+
+.table-header {
+  background-color: grey;
+}
+
+.view-header {
+  color: grey !important;
+  user-select: none;
+}
+
+.answers-table tr {
+  border: 1px solid grey;
+}
+
+th:nth-child(2) {
+  width: 20%;
+}
+
+.incorrect {
+  color: red;
+}
+
+.qview {
+  background-color: white;
+  border-radius: 50px;
+  border: 1px solid grey;
+  font-size: 18px;
+  padding: 5px;
+  padding-left: 8px;
+  padding-right: 8px;
 }

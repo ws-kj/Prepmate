@@ -49,6 +49,8 @@ export const sectionTitles = [
   "Section 2, Module 2: Math"
 ];
 
+export const choiceLetters = [ 'A' , 'B', 'C', 'D' ];
+
 export interface Annotation {
   questionId: number;
   start: number;
