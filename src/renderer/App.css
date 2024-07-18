@@ -724,7 +724,7 @@ button:hover {
   user-select: none;
   cursor: pointer;
   color: white;
-  background-color: grey;
+  background-color: blue;
   border-radius: 100%;
   height: 50px;
   width: 50px;
@@ -866,4 +866,90 @@ th:nth-child(2) {
   padding: 5px;
   padding-left: 8px;
   padding-right: 8px;
+}
+
+.question-popup {
+  position: absolute;
+  z-index: 9999;
+  width: 85vw;
+  max-height: 80vh;
+  max-width: 1200px;
+  background-color: white;
+  border-radius: 10px;
+  border: 2px solid grey;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  top: 120px;
+  display: flex;
+  flex-direction: column;
+}
+
+.qpopup-header {
+  height: 75px;
+  padding-left: 30px;
+  font-weight: bold;
+}
+
+.qpopup-body {
+  padding-left: 30px;
+  padding-right: 30px;
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 30px;
+}
+
+.popup-panel {
+  width: 50%;
+  max-height: 100%;
+  overflow-y: scroll;
+  padding: 0;
+}
+
+.popup-passage {
+  border-right: 2px solid grey;
+  margin-right: 16px;
+  overflow-y: scroll;
+  flex-grow: 1;
+  max-height: 100% !important;
+}
+
+.correct-choice {
+  border: 2px solid green;
+  box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
+  color: green;
+  font-weight: bold;
+}
+
+.correct-choice .choice-letter {
+  background-color: green;
+  color: white;
+  border: 2px solid green;
+}
+
+.wrong-choice {
+  border: 2px solid red;
+  box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2);
+  font-weight: bold;
+  color: red;
+}
+
+.wrong-choice .choice-letter {
+  background-color: red;
+  color: white;
+  border: 2px solid red;
+}
+
+.you-selected {
+  margin-bottom: 0;
+}
+
+.tr-correct {
+  margin: 0;
+  color: green;
+}
+
+.tr-wrong {
+  color: red;
+  font-weight: bold;
 }

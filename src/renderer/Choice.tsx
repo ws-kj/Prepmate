@@ -7,7 +7,7 @@ interface ChoiceLetterProps {
   index: number;
 };
 
-const ChoiceLetter: React.FC<ChoiceLetterProps> = ({index}) => {
+export const ChoiceLetter: React.FC<ChoiceLetterProps> = ({index}) => {
   const [letterValue, setLetterValue] = useState<string>("A");
 
   useEffect(() => {

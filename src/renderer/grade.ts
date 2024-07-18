@@ -1,4 +1,4 @@
-import { Question, Answer, Test, TestConfig } from './types';
+import { Question, Answer, Test, TestConfig, choiceLetters } from './types';
 
 export interface GradedAnswer {
   correct: boolean;
@@ -110,9 +110,81 @@ export const gradeTest = (config: TestConfig, responses: (Answer | null)[]): Gra
     });
   });
 
+  buildCsv(result);
+
   return result;
 }
 
 export const convertToScore = (test: GradedTest): number => {
 
+}
+
+const frac = (a: number, b: number): string => {
+  return ( (a / b) * 100 ).toPrecision(3).toString() + "%";
+}
+// category/type/section, correct, total, frac
+// id, module, qNumber, studentAns, correctAns, correct, categories
+export const buildCsv = (gt: GradedTest): string => {
+  var rows = [];
+  var res: string = "";
+
+  rows.push(["question type", "correct", "total", "percentage"]);
+
+  rows.push([
+    "Overall",
+    gt.overallTotal,
+    gt.answers.length,
+    frac(gt.overallTotal, gt.answers.length)
+  ]);
+  rows.push([
+    "Reading",
+    gt.readingTotal,
+    gt.answers.filter(g => g.question.type == "reading").length,
+    frac(gt.readingTotal, gt.answers.filter(g => g.question.type == "reading").length),
+  ]);
+  rows.push([
+    "Math",
+    gt.mathTotal,
+    gt.answers.filter(g => g.question.type == "math").length,
+    frac(gt.mathTotal, gt.answers.filter(g => g.question.type == "math").length),
+  ]);
+
+  rows.push(["","","",""]);
+  rows.push(["section", "correct", "total", "percentage"]);
+
+  gt.sectionResults.map((s, _) => {
+    rows.push([s.section!, s.correct, s.total, frac(s.correct, s.total)]);
+  });
+
+  rows.push(["","","",""]);
+  rows.push(["category", "correct", "total", "percentage"]);
+
+  gt.categoryResults.map((c, _) => {
+    rows.push([c.category!, c.correct, c.total, frac(c.correct, c.total)]);
+  });
+
+  rows.push(["","","",""]);
+  rows.push(["section", "number", "response", "correct", "points", "categories"]);
+  gt.answers.map((a, _) => {
+    rows.push([
+      a.question.section+1,
+      a.question.qNumber,
+      a.response ?
+        (a.response.choice != null ? choiceLetters[a.response.choice] : a.response.freeResponseRaw)
+      :
+        "None",
+      a.answer.choice != null ? choiceLetters[a.answer.choice] : a.answer.freeResponseRaw,
+      a.correct ? "1" : "0",
+      a.question.categories.join("_")
+    ]);
+  });
+
+  console.log(rows);
+
+  for (const row of rows) {
+    res += row.join(",");
+    res += "\n";
+  }
+  console.log(res);
+  return res;
 }
