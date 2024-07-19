@@ -110,8 +110,6 @@ export const gradeTest = (config: TestConfig, responses: (Answer | null)[]): Gra
     });
   });
 
-  buildCsv(result);
-
   return result;
 }
 
