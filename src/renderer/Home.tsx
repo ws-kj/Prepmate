@@ -11,6 +11,7 @@ import { loadTest } from './test';
 import { TestConfig, Break, Test, ImageSrc } from './types';
 import TestView from './TestView';
 import ReportView from './ReportView';
+import Splash from './Splash';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faGear, faListCheck, faClose } from '@fortawesome/free-solid-svg-icons';
@@ -145,32 +146,78 @@ const Home: React.FC<HomeProps> = ({}) => {
   const [showConfigMenu, setShowConfigMenu] = useState<boolean>(false);
 
   const [configFile, setConfigFile] = useState<File | null>(null);
+  const [gradedFile, setGradedFile] = useState<File | null>(null);
+
+  const [showSplash, setShowSplash] = useState<boolean>(false);
+
+  const toggleSplash = () => {
+    setShowSplash(!showSplash);
+  }
 
   const toggleConfigMenu = () => {
     setShowConfigMenu(!showConfigMenu);
   }
 
-  const handleStartTest = async () => {
-    const element = document.createElement("input");
-    element.type = "file";
-    element.addEventListener('change', async (e) => {
-      const target = e.target as HTMLInputElement;
-      if(target.files) {
-        setConfigFile(target.files[0]);
-        console.log(target.files[0].path);
-
-        const raw = await target.files[0].text();
-        const config: TestConfig = JSON.parse(raw);
-        console.log(config);
-      }
-    });
-    element.click();
+  const backToHome = () => {
+    setTestConfig(null);
+    setGradedTest(null);
   }
 
-  const handleConfigureTest = () => {
+  const handleStartTest = async () => {
+    try {
+      const element = document.createElement("input");
+      element.type = "file";
+      element.addEventListener('change', async (e) => {
+        const target = e.target as HTMLInputElement;
+        if(target.files) {
+          setConfigFile(target.files[0]);
+          console.log(target.files[0].path);
+
+          try {
+            const raw = await target.files[0].text();
+            const config: TestConfig = JSON.parse(raw);
+            console.log(config);
+            setTestConfig(config);
+            setShowSplash(true);
+          } catch (error) {
+            alert("Couldn't load test config!");
+            return;
+          }
+        }
+      });
+      element.click();
+    } catch (error) {
+      alert("Couldn't load test!");
+      return;
+    }
   }
 
   const handleViewTest = () => {
+    try {
+      const element = document.createElement("input");
+      element.type = "file";
+      element.addEventListener('change', async (e) => {
+        const target = e.target as HTMLInputElement;
+        if(target.files) {
+          setGradedFile(target.files[0]);
+          console.log(target.files[0].path);
+
+          const raw = await target.files[0].text();
+          try {
+            const graded: GradedTest = JSON.parse(raw);
+            console.log(graded);
+            setGradedTest(graded);
+          } catch (error) {
+            alert("Couldn't parse test! Make sure it's .json");
+            return;
+          }
+        }
+      });
+      element.click();
+    } catch (error) {
+      alert("Couldn't load graded test! Make sure you select .json and not .csv");
+      return;
+    }
   }
 
   const openTestView = (gt: GradedTest, config: TestConfig) => {
@@ -207,11 +254,14 @@ const Home: React.FC<HomeProps> = ({}) => {
         </div>
       </div>
       }
-      { testConfig && !gradedTest &&
+      { showSplash && testConfig &&
+      <Splash config={testConfig} backToHome={backToHome} toggleSplash={toggleSplash}/>
+      }
+      { testConfig && !gradedTest && !showSplash &&
       <TestView config={testConfig} openTestView={openTestView} />
       }
-      { gradedTest && testConfig &&
-      <ReportView gt={gradedTest} />
+      { gradedTest &&
+      <ReportView gt={gradedTest} backToHome={backToHome} />
       }
     </div>
   );

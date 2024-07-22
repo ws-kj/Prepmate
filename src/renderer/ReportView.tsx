@@ -96,9 +96,10 @@ const QuestionPopup: React.FC<QuestionPopupProps> = ({ga, togglePopup}) => {
 
 interface ReportViewProps {
   gt: GradedTest;
+  backToHome: () => void;
 }
 
-const ReportView: React.FC<ReportViewProps> = ({gt}) => {
+const ReportView: React.FC<ReportViewProps> = ({gt, backToHome}) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [popupGA, setPopupGA] = useState<GradedAnswer | null>(null);
 
@@ -116,7 +117,6 @@ const ReportView: React.FC<ReportViewProps> = ({gt}) => {
   }
 
   const downloadCSV = (e) => {
-    console.log("E");
     const csv = buildCsv(gt);
     const element = document.createElement("a");
     const f = new Blob([csv], {type: "text/plain"});
@@ -125,12 +125,22 @@ const ReportView: React.FC<ReportViewProps> = ({gt}) => {
     element.click();
   }
 
+  const downloadJSON = (e) => {
+    const text = JSON.stringify(gt);
+    const element = document.createElement("a");
+    const f = new Blob([text], {type: "text/plain"});
+    element.href = URL.createObjectURL(f);
+    element.download = gt.testName + "_" + gt.studentName + "_" + gt.timestamp + ".json";
+    element.click();
+
+  }
+
   return (
     <div className='report-view'>
       <div className='report-header'>
         <div className='back-container'>
           <div className='back-arrow'>
-            <FontAwesomeIcon icon={faArrowLeft}className="back-icon" />
+            <FontAwesomeIcon icon={faArrowLeft}className="back-icon" onClick={backToHome}/>
           </div>
         </div>
         <div className='report-header-left'>
@@ -138,6 +148,7 @@ const ReportView: React.FC<ReportViewProps> = ({gt}) => {
           <p>Taken by {gt.studentName} on {gt.timestamp}</p>
         </div>
         <div className='report-header-right'>
+          <button className="view-answers" onClick={downloadJSON}>  Download JSON </button>
           <button className="view-answers" onClick={downloadCSV}>  Download CSV </button>
         </div>
       </div>

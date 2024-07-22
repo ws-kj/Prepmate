@@ -36,7 +36,7 @@ export interface ImageSrc {
 export interface TestConfig {
   testName: string,
   studentName: string,
-  test: Test | null,
+  test: Test,
   sectionLengths: number[],
   breaks: Break[],
   images: ImageSrc[],
