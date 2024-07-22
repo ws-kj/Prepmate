@@ -28,14 +28,15 @@ export interface Break {
 }
 
 export interface ImageSrc {
-  questionId: number,
+  section: number,
+  qNum: number,
   path: string
 }
 
 export interface TestConfig {
   testName: string,
   studentName: string,
-  test: Test,
+  test: Test | null,
   sectionLengths: number[],
   breaks: Break[],
   images: ImageSrc[],

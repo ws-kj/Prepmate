@@ -9,6 +9,8 @@ import { Question, Test, TestConfig, Break } from './types';
 import { loadTest } from './test';
 import { GradedTest } from './grade';
 
+import Home from './Home';
+
 export default function App() {
   const [testConfig, setTestConfig] = useState<TestConfig | null>(null);
   const [gradedTest, setGradedTest] = useState<GradedTest | null>(null);
@@ -39,6 +41,15 @@ export default function App() {
     };
     if(!testConfig) getTest();
   }, [testConfig]);
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home/>}/>
+      </Routes>
+    </Router>
+  );
+  /*
   return (
     <Router>
       <Routes>
@@ -50,5 +61,5 @@ export default function App() {
         }
       </Routes>
     </Router>
-  );
+  );*/
 }
