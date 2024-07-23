@@ -1,13 +1,22 @@
 import React, { useState, ChangeEvent, useEffect, RefObject, ReactNode } from 'react';
+import { ElectronHandler } from '../main/preload';
 import { Question, Annotation } from './types';
 import Choice from './Choice';
 import './App.css';
+import { Buffer } from 'buffer';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark as bookmarkOutline } from '@fortawesome/free-regular-svg-icons';
 import { faBookmark as bookmarkSolid, faClose } from '@fortawesome/free-solid-svg-icons';
 
 var Latex = require('react-latex');
+
+
+declare global {
+  interface Window {
+    electron: ElectronHandler;
+  }
+}
 
 interface AnnotationHighlightProps {
   passageText: string,
@@ -47,6 +56,7 @@ const AnnotationHighlight: React.FC<AnnotationHighlightProps> = ({
 interface QuestionViewProps {
   question: Question;
   annotations: Annotation[];
+  imgPath: string | null;
   handleAnswerEntry: (choiceIndex: number | null, freeResponse: string | null) => void;
   toggleMarked: (id: number) => void;
   isMarked: boolean;
@@ -65,6 +75,7 @@ interface QuestionViewProps {
 const QuestionView: React.FC<QuestionViewProps> = ({
   question,
   annotations,
+  imgPath,
   handleAnswerEntry,
   toggleMarked,
   isMarked,
@@ -81,6 +92,7 @@ const QuestionView: React.FC<QuestionViewProps> = ({
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(getPrevChoice());
   const [freeResponseValue, setFreeResponseValue] = useState<string>('');
+  const [imgURL, setImgURL] = useState<string>('');
 
   const renderAnnotations = (text: string): ReactNode[] => {
     const list = [...annotations.filter(a => a.questionId == question.id)];
@@ -154,6 +166,20 @@ const QuestionView: React.FC<QuestionViewProps> = ({
   useEffect(() => {
     setSelectedAnswer(getPrevChoice());
     setFreeResponseValue(getPrevFreeResponse());
+
+    const setImg = async () => {
+      if(imgPath) {
+        try {
+          await window.electron.fileSystem.readFile(imgPath).then((file) => {
+            setImgURL("file://" + imgPath);
+          });
+        } catch (error) {
+          alert("Error loading question image.");
+          console.log(error);
+        }
+      }
+    }
+    setImg();
   }, [question]);
 
   return (
@@ -190,6 +216,7 @@ const QuestionView: React.FC<QuestionViewProps> = ({
               <p>ABC</p>
             </div>
           </div>
+          {imgPath && <img src={imgURL} className="question-image"/> }
           <p className="question">
             <Latex>{question.question}</Latex>
           </p>

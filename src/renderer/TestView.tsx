@@ -388,6 +388,12 @@ const TestView: React.FC<TestViewProps> = ({config, openTestView}) => {
       <QuestionView
         question={currentQuestion}
         annotations={annotations}
+        imgPath={
+            config.images.filter(i =>
+              i.section == currentQuestion.section &&
+              i.qNum == currentQuestion.qNumber
+            )[0]?.path
+          }
         handleAnswerEntry={handleAnswerEntry}
         toggleMarked={toggleMarked}
         isMarked={marked.some(i => i == currentQuestion.id)}
