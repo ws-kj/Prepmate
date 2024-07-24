@@ -12,36 +12,6 @@ import { GradedTest } from './grade';
 import Home from './Home';
 
 export default function App() {
-  const [testConfig, setTestConfig] = useState<TestConfig | null>(null);
-  const [gradedTest, setGradedTest] = useState<GradedTest | null>(null);
-
-  const openTestView = (gt: GradedTest, config: TestConfig) => {
-    setTestConfig(config);
-    setGradedTest(gt);
-  }
-
-  useEffect(() => {
-    async function getTest() {
-      const newtest = await loadTest("./tests/Short.csv");
-      if(!newtest) {
-        alert("failed to load test from file");
-        return;
-      }
-
-      const config: TestConfig = {
-        testName: "Example Test",
-        studentName: "Student",
-        test: newtest,
-        sectionLengths: [5, 5, 5, 5],
-        breaks: [{prevSection: 1, length: 5}],
-        images: [],
-        scoreScalePath: "",
-      };
-      setTestConfig(config);
-    };
-    if(!testConfig) getTest();
-  }, [testConfig]);
-
   return (
     <Router>
       <Routes>
