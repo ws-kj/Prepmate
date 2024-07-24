@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { gradeTest, GradedTest, GradedAnswer, buildCsv } from './grade';
+import { gradeTest, GradedTest, GradedAnswer, buildCsv, convertToScore } from './grade';
 import { Question, TestConfig, choiceLetters } from './types';
 import { ChoiceLetter } from './Choice';
 
@@ -156,9 +156,9 @@ const ReportView: React.FC<ReportViewProps> = ({gt, backToHome}) => {
         <div className='report-summary'>
           <p className="summary-title">Summary</p>
           <div className='summary-section'>
-            <div className='summary-section-header'>Total Score</div>
+            <div className='summary-section-header'>Score Range</div>
             <div className='summary-section-body'>
-              <p className='total-score'>0000</p>
+              <p className='total-score'>{gt.scoreRange}</p>
               <p>Raw: {gt.overallTotal} / {gt.answers.length} ({frac(gt.overallTotal, gt.answers.length)})</p>
               <p>
                 Reading: {gt.readingTotal} / {gt.answers.filter(g => g.question.type == "reading").length}

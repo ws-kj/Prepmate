@@ -5,7 +5,7 @@
 
 import React, { useState, uesEffect } from 'react';
 
-import { GradedTest } from './grade'
+import { GradedTest, ScoreScale, loadScoreScale } from './grade'
 import { loadTest } from './test';
 
 import { TestConfig, Break, Test, ImageSrc } from './types';
@@ -52,6 +52,9 @@ const ConfigMenu: React.FC<ConfigMenuProps> = ({setTestConfig, toggleConfigMenu}
         return;
       }
 
+      const scale = await loadScoreScale(scalePath);
+      console.log(scale);
+
       const config: TestConfig = {
         testName: testName,
         studentName: "",
@@ -59,7 +62,7 @@ const ConfigMenu: React.FC<ConfigMenuProps> = ({setTestConfig, toggleConfigMenu}
         sectionLengths: sectionLengths,
         breaks: breaks,
         images: images,
-        scoreScalePath: scalePath,
+        scoreScale: scale
       };
       console.log(config);
 

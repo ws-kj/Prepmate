@@ -1,3 +1,5 @@
+import { ScoreScale } from "./grade";
+
 export type QuestionType = "reading" | "math";
 
 export interface Question {
@@ -40,7 +42,7 @@ export interface TestConfig {
   sectionLengths: number[],
   breaks: Break[],
   images: ImageSrc[],
-  scoreScalePath: string,
+  scoreScale: ScoreScale | null
 }
 
 export const sectionTitles = [

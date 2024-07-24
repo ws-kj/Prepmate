@@ -1,5 +1,17 @@
 import { Question, Answer, Test, TestConfig, choiceLetters } from './types';
 
+import { ElectronHandler } from '../main/preload';
+import { usePapaParse } from 'react-papaparse';
+
+
+const { readString } = usePapaParse();
+
+declare global {
+  interface Window {
+    electron: ElectronHandler;
+  }
+}
+
 export interface GradedAnswer {
   correct: boolean;
   question: Question;
@@ -25,6 +37,24 @@ export interface GradedTest {
   overallTotal: number;
   readingTotal: number;
   mathTotal: number;
+  scoreRange: string;
+}
+
+interface ScoreCsvRow {
+  Correct: string;
+  Lower: string;
+  Upper: string;
+}
+
+interface ScoreRow {
+  correct: number;
+  low: string;
+  high: string;
+}
+
+export interface ScoreScale {
+  reading: ScoreRow[];
+  math: ScoreRow[];
 }
 
 export const gradeTest = (config: TestConfig, responses: (Answer | null)[]): GradedTest => {
@@ -44,6 +74,7 @@ export const gradeTest = (config: TestConfig, responses: (Answer | null)[]): Gra
     answers: [],
     sectionResults: [],
     categoryResults: [],
+    scoreRange: 'N/A',
   };
 
   config.test.questions.forEach((q, i) => {
@@ -110,11 +141,72 @@ export const gradeTest = (config: TestConfig, responses: (Answer | null)[]): Gra
     });
   });
 
+  result.scoreRange = convertToScore(config.scoreScale, result);
+
   return result;
 }
 
-export const convertToScore = (test: GradedTest): number => {
+const toScoreRow = (r: ScoreCsvRow): ScoreRow => {
+  return {
+    correct: parseInt(r["Correct"]),
+    low: r["Lower"],
+    high: r["Upper"]
+  };
+}
 
+export const loadScoreScale = async (path: string): Promise<ScoreScale | null>  => {
+  console.log("LOAD");
+  if (path == "") return null;
+  console.log(path);
+  try {
+    var scale: ScoreScale = { reading: [], math: [] };
+    await window.electron.fileSystem.readFile(path).then((file) => {
+      readString(file, {
+        header: true,
+        complete: (results) => {
+          const csvRows: ScoreCsvRow[] = results.data as ScoreCsvRow[];
+          const rows: ScoreRow[] = csvRows.map(r => toScoreRow(r));
+          const mid = rows.indexOf(rows.filter((r, i) => i != 0 && r.correct == 0)[0]);
+
+          const reading = rows.slice(0, mid);
+          const math = rows.slice(mid, rows.length);
+          console.log(rows);
+          scale = { reading: reading, math: math };
+        }
+      });
+    });
+    return scale;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export const convertToScore = (scale: ScoreScale | null, gt: GradedTest): string => {
+  if(!scale) return "N/A";
+
+  try {
+    const reading = scale.reading;
+    const math = scale.math;
+
+    console.log(gt.readingTotal);
+    console.log(scale.reading);
+    console.log(scale.reading.filter( r=> r.correct == gt.readingTotal));
+
+    const readingLower = reading.filter(r => r.correct == gt.readingTotal)[0].low;
+    const readingHigher = reading.filter(r => r.correct == gt.readingTotal)[0].high;
+
+    const mathLower = math.filter(r => r.correct == gt.mathTotal)[0].low;
+    const mathHigher = math.filter(r => r.correct == gt.readingTotal)[0].high;
+
+    const lower = parseInt(readingLower) + parseInt(mathLower);
+    const higher = parseInt(readingHigher) + parseInt(mathHigher);
+
+    return lower.toString() + " to " + higher.toString();
+  } catch (error) {
+    console.log(error);
+  }
+  return "N/A";
 }
 
 const frac = (a: number, b: number): string => {

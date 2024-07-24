@@ -876,6 +876,10 @@ button:hover {
   width: 100%;
   border-collapse: collapse;
   border: 1px solid grey;
+  margin-bottom: 150px;
+}
+
+.answers-body {
 }
 
 .answers-table td {
